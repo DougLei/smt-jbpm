@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mapping-configuration>
+	<!-- 进入任务 -->
+	<sql namespace="EnterTask">
+	
+		<!-- 查询指定用户在指定任务中, 具体的HandleMode -->
+		<content name="queryHandleMode" type="select">
+			select 'HANDLING' handle_mode from bpm_ru_assignee where taskinst_id=#{[0]} and user_id =#{[1]} and handle_state =5
+			union
+			select 'CLAIMING' handle_mode from bpm_ru_assignee where taskinst_id=#{[0]} and user_id =#{[1]} and handle_state =4
+			union
+			select 'CLAIMING' handle_mode from bpm_ru_assignee where taskinst_id=#{[0]} and user_id =#{[1]} and handle_state =3
+			union
+			select 'DISPATCHING' handle_mode from bpm_ru_dispatch where taskinst_id=#{[0]} and user_id =#{[1]} and is_enabled=1
+		</content>
+		
+		<!-- 查询任务的详细信息 -->
+		<content name="querTaskDetail" type="select">
+			select 
+				task.procdef_id, procinst.procinst_id, 
+				task.taskinst_id, task.name, task.assign_count, task.is_all_claimed, task.key_, 
+				task.suspend_time tsuspend_time, procinst.state procinst_state, 
+				task.business_id tbusiness_id, procinst.business_id pbusiness_id, task.page_id tpage_id, procinst.page_id ppage_id 
+					from bpm_ru_task task
+						left join bpm_ru_procinst procinst on (task.procinst_id = procinst.procinst_id)
+							where task.taskinst_id=#{taskinstId}
+		</content>
+		
+		<!-- 查询历史任务的详细信息 -->
+		<content name="querHistoryTaskDetail" type="select">
+			select 
+				task.procdef_id, procinst.procinst_id, 
+				task.taskinst_id, task.name, task.assign_count, task.is_all_claimed, task.key_, 
+				task.suspend_time tsuspend_time, procinst.state procinst_state, 
+				task.business_id tbusiness_id, procinst.business_id pbusiness_id, task.page_id tpage_id, procinst.page_id ppage_id 
+					from (
+						select procdef_id, procinst_id, taskinst_id, name, assign_count, is_all_claimed, key_, suspend_time, business_id, page_id from bpm_ru_task
+						union
+						select procdef_id, procinst_id, taskinst_id, name, assign_count, is_all_claimed, key_, suspend_time, business_id, page_id from bpm_hi_task
+					) task
+						left join (
+							select procinst_id, state, business_id, page_id from bpm_ru_procinst
+							union
+							select procinst_id, state, business_id, page_id from bpm_hi_procinst
+						) procinst on (task.procinst_id = procinst.procinst_id)
+							where task.taskinst_id=#{taskinstId}
+		</content>
+		
+	</sql>
+</mapping-configuration>

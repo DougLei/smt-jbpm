@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mapping-configuration>
+	<!-- 流程定义扩展表 -->
+	<table name="BPM_RE_PROCDEF_EXTEND" class="com.smt.jbpm.module.repository.definition.insert.ProcessDefinitionExtend" createMode="create" strict="true">
+		<columns>
+			<column name="ID" property="id" dataType="number" length="10" />
+			<column name="PROCDEF_ID" property="procdefId" dataType="number" length="10" nullable="false"/>
+			<column name="STRUCT" property="struct" dataType="clob" nullable="false" />
+			<column name="IMAGE" property="image" dataType="clob" nullable="false" />
+			<column name="CREATE_DATE" property="createDate" dataType="datetime" nullable="false" />
+			<column name="LAST_UPDATE_DATE" property="lastUpdateDate" dataType="datetime" nullable="false" />
+			<column name="PAGE_ID" property="pageId" dataType="string" length="500"/>
+		</columns>
+		
+		<constraints>
+			<constraint type="PRIMARY_KEY" isAutoIncrement="true">
+				<column name="ID" />
+			</constraint>
+		</constraints>
+	</table>
+</mapping-configuration>

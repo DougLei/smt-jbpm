@@ -1,0 +1,18 @@
+
+
+// 测试json转xml
+public static void main(String[] args) {
+	FileBufferedReader reader = new FileBufferedReader(new File("C:\\Users\\Administrator.USER-20190410XF\\Desktop\\process.json.txt"));
+	String s = reader.readAll();
+	
+	StringBuilder sb = new StringBuilder();
+	for(int i=0;i<s.length();i++) {
+		if(s.charAt(i) == ' ' || s.charAt(i) == '\n' || s.charAt(i) == '\t')
+			continue;
+		if(s.charAt(i) == '"')
+			sb.append('\\');
+		
+		sb.append(s.charAt(i));
+	}
+	System.out.println(sb);
+}

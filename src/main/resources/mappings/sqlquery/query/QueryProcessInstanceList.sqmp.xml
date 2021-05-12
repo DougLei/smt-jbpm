@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mapping-configuration>
+	<!-- 查询流程实例列表 -->
+	<sql-query name="QueryProcessInstanceList">
+		<content>
+			select procinst.procinst_id id, procdef.type_id, procinst.procdef_id, procdef.state procdef_state, procinst.title, procinst.business_id, procinst.start_user_id, procinst.start_time, procinst.end_time, procinst.state, procinst.tenant_id
+				from bpm_hi_procinst procinst
+					left join bpm_re_procdef procdef on (procdef.id = procinst.procdef_id)
+			union
+			select procinst.procinst_id id, procdef.type_id, procinst.procdef_id, procdef.state procdef_state, procinst.title, procinst.business_id, procinst.start_user_id, procinst.start_time, null end_time, procinst.state, procinst.tenant_id
+				from bpm_ru_procinst procinst
+					left join bpm_re_procdef procdef on (procdef.id = procinst.procdef_id)
+		</content>
+		
+		<parameters>
+			<parameter name="id" dataType="string" />	
+			<parameter name="type_id" dataType="number" />
+			<parameter name="procdef_id" dataType="number" />
+			<parameter name="procdef_state" dataType="string" />
+			<parameter name="title" dataType="string" />		
+			<parameter name="business_id" dataType="string" />		
+			<parameter name="start_user_id" dataType="string" />		
+			<parameter name="start_time" dataType="datetime" />
+			<parameter name="end_time" dataType="datetime" />
+			<parameter name="state" dataType="string" />
+			<parameter name="tenant_id" dataType="string" />		
+		</parameters>	
+	</sql-query>
+</mapping-configuration>

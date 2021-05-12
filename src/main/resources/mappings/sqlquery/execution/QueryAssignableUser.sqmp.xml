@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mapping-configuration>
+	<!-- 查询可指派的用户集合 -->
+	<sql-query name="QueryAssignableUser">
+		<content>
+			with 
+				user_role_temp_tb as (
+					select rul.right_id user_id, role_.sir_code role_id, role_.sir_name role_name from smt_imp_res_user_link rul
+						left join smt_imp_role role_ on (role_.sir_code = rul.left_id)
+							where rul.left_resource='role' and rul.right_resource='user'
+				), 
+				user_role_tb as (
+					select distinct
+						urtt.user_id, 
+						stuff((select ','+role_id from user_role_temp_tb where user_id=urtt.user_id for xml path('')),1,1,'') role_id,
+						stuff((select ','+role_name from user_role_temp_tb where user_id=urtt.user_id for xml path('')),1,1,'') role_name
+							from user_role_temp_tb urtt
+				),
+				user_dept_tb as (
+					select dul.right_id user_id, dept.id dept_id, dept.name dept_name from smt_imp_dept_user_link dul
+						left join smt_imp_dept dept on (dept.id = dul.left_id) 
+				)
+			select id, real_name name, udt.dept_id, udt.dept_name, urt.role_id, urt.role_name from smt_imp_user user_
+				left join user_dept_tb udt on (udt.user_id=user_.id)		
+				left join user_role_tb urt on (urt.user_id=user_.id)
+					where 
+					<foreach collection="userIds" alias="userId" open="user_.id in (" separator="," close=")">
+						#{userId}
+					</foreach>
+		</content>
+		
+		<parameters>
+			<parameter name="id" dataType="string" />
+			<parameter name="name" dataType="string" />
+			<parameter name="dept_id" dataType="string" />	
+			<parameter name="dept_name" dataType="string" />
+			<parameter name="role_id" dataType="string" />	
+			<parameter name="role_name" dataType="string" />
+		</parameters>
+	</sql-query>
+</mapping-configuration>

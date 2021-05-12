@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mapping-configuration>
+	<!-- 查询流程定义列表 -->
+	<sql-query name="QueryProcessDefinitionList">
+		<content>
+			select 
+				procdef.id, 
+				procdef.type_id type_id, 
+				procdef.name, 
+				procdef.code, 
+				procdef.version, 
+				procdef.state, 
+				procdef.is_major_version, 
+				procdef.is_major_subversion, 
+				procdef.subversion, 
+				procdef.description, 
+				procdef.tenant_id, 
+				extend.create_date, 
+				extend.page_id 
+					from bpm_re_procdef procdef
+						left join bpm_re_procdef_extend extend on (procdef.id = extend.procdef_id)
+		</content>
+		
+		<parameters>
+			<parameter name="id" dataType="number" />	
+			<parameter name="type_id" dataType="number" />		
+			<parameter name="name" dataType="string" />		
+			<parameter name="code" dataType="string" />		
+			<parameter name="version" dataType="string" />	
+			<parameter name="state" dataType="number" />
+			<parameter name="is_major_version" dataType="number" />
+			<parameter name="is_major_subversion" dataType="number" />
+			<parameter name="subversion" dataType="number" />
+			<parameter name="tenant_id" dataType="string" />		
+			<parameter name="create_date" dataType="datetime" />		
+		</parameters>	
+	</sql-query>
+</mapping-configuration>

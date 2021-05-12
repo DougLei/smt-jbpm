@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mapping-configuration>
+	<!-- 查询用户待办列表 -->
+	<sql-query name="QueryUserTodoList">
+		<content>
+			select task.taskinst_id id, procdef.type_id, procinst.title, procinst.start_user_id, task.name, result_.todo_type, task.start_time, task.expiry_time from (
+				select taskinst_id, 'CLAIMED' todo_type from bpm_ru_assignee where user_id = #{userId} and handle_state =5
+				union
+				select taskinst_id, 'UNCLAIM' todo_type from bpm_ru_assignee where user_id = #{userId} and handle_state =4
+				union
+				select taskinst_id, 'UNCLAIM' todo_type from bpm_ru_assignee where user_id = #{userId} and handle_state =3
+				union
+				select taskinst_id, 'DISPATCH' todo_type from bpm_ru_dispatch where user_id = #{userId} and is_enabled=1
+			) result_
+				left join bpm_ru_task task on(result_.taskinst_id = task.taskinst_id)
+				left join bpm_ru_procinst procinst on (task.procinst_id = procinst.procinst_id)
+				left join bpm_re_procdef procdef on (task.procdef_id = procdef.id)
+					where task.suspend_time is null and procinst.state=1
+		</content>
+		
+		<parameters>
+			<parameter name="id" dataType="string" />	
+			<parameter name="type_id" dataType="number" />
+			<parameter name="title" dataType="string" />
+			<parameter name="start_user_id" dataType="string" />
+			<parameter name="name" dataType="string" />		
+			<parameter name="todo_type" dataType="string" />
+			<parameter name="start_time" dataType="datetime" />
+			<parameter name="expiry_time" dataType="datetime" />
+		</parameters>
+	</sql-query>
+</mapping-configuration>

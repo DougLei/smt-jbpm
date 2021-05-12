@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mapping-configuration>
+	<!-- 流程跟踪查询 -->
+	<sql namespace="ProcessTrackQuery">
+		
+		<!-- 流程跟踪主体查询 -->
+		<!-- 查询流程实例 -->
+		<content name="queryProcess" type="select">
+			select procinst.procinst_id id, procinst.procdef_id, procinst.title, user_.real_name start_user, procinst.start_time, procinst.state, procinst.suspend_time, procinst.end_time, procdef_extend.image from (
+				select procdef_id, procinst_id, title, start_user_id, start_time, null end_time, suspend_time, state from bpm_ru_procinst
+				union
+				select procdef_id, procinst_id, title, start_user_id, start_time, end_time, suspend_time, state from bpm_hi_procinst
+			) procinst
+				left join bpm_re_procdef_extend procdef_extend on (procdef_extend.procdef_id = procinst.procdef_id)
+				left join smt_imp_user user_ on (user_.id = start_user_id)
+					where procinst.procinst_id= #{procinstId}
+		</content>
+		<!-- 查询指定流程实例下的所有任务信息 -->
+		<content name="queryAllTask" type="select">
+			select * from (
+				select taskinst_id id, procinst_id, key_, source_key, start_time, expiry_time, suspend_time, null end_time, is_all_claimed from bpm_ru_task
+				union
+				select taskinst_id id, procinst_id, key_, source_key, start_time, expiry_time, suspend_time, end_time, is_all_claimed from bpm_hi_task
+			) task where task.procinst_id= #{procinstId} order by task.start_time desc
+		</content>
+		
+		<!-- 流程跟踪任务办理明细查询 -->
+		<!-- 查询指定流程实例下, 指定key的任务信息 -->
+		<content name="queryTask" type="select">
+			select * from (
+				select taskinst_id id, procinst_id, key_, source_key, start_time, expiry_time, suspend_time, null end_time, is_all_claimed from bpm_ru_task
+				union
+				select taskinst_id id, procinst_id, key_, source_key, start_time, expiry_time, suspend_time, end_time, is_all_claimed from bpm_hi_task
+			) task where task.procinst_id= #{[0]} and task.key_= #{[1]} order by task.start_time desc
+		</content>
+		
+		<!-- 查询任务的具体办理信息 -->
+		<content name="queryTaskHandleDetails" type="select">
+			select 
+				handle_details.taskinst_id, 
+				user_.real_name user_,
+				handle_details.claim_time,
+				handle_details.finish_time,
+				handle_details.suggest,
+				handle_details.attitude,
+				handle_details.state
+					from (
+						select taskinst_id, user_id, claim_time, null finish_time, null suggest, null attitude, handle_state state from bpm_ru_assignee where handle_state=4
+						union
+						select taskinst_id, user_id, claim_time, null finish_time, null suggest, null attitude, handle_state state from bpm_ru_assignee where handle_state=5
+						union
+						select taskinst_id, user_id, claim_time, finish_time, suggest, attitude, handle_state state from bpm_hi_assignee where handle_state=6
+						union
+						select taskinst_id, user_id, null claim_time, null finish_time, null suggest, null attitude, 7 state from bpm_ru_dispatch where is_enabled=1
+						union
+						select taskinst_id, user_id, null claim_time, dispatch_time finish_time, null suggest, null attitude, 8 state from bpm_hi_dispatch where is_enabled=1
+					) handle_details
+						left join smt_imp_user user_ on (user_.id = handle_details.user_id)
+							where 
+							<foreach collection="tasks" alias="task" open="handle_details.taskinst_id in (" separator="," close=")">
+								#{task.id}
+							</foreach>
+								order by handle_details.finish_time asc
+		</content>
+	</sql>
+</mapping-configuration>

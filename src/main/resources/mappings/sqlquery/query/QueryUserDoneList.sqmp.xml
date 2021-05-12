@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mapping-configuration>
+	<!-- 查询用户已办列表 -->
+	<sql-query name="QueryUserDoneList">
+		<content>
+			select task.taskinst_id id, procdef.type_id, procinst.title, procinst.start_user_id, task.name name, assignee.finish_time, task.state_ task_state, procinst.state_ procinst_state, task.business_id, task.page_id
+				from (select distinct taskinst_id, finish_time from bpm_hi_assignee where user_id=#{userId} and handle_state = 6) assignee
+					left join (
+						select procdef_id, procinst_id, taskinst_id, name, business_id, page_id, 'H' state_ from bpm_hi_task
+						union
+						select procdef_id, procinst_id, taskinst_id, name, business_id, page_id, 'R' state_ from bpm_ru_task
+					) task on (assignee.taskinst_id = task.taskinst_id)
+					left join (
+						select procinst_id, title, start_user_id, state, 'H' state_ from bpm_hi_procinst
+						union
+						select procinst_id, title, start_user_id, state, 'R' state_ from bpm_ru_procinst	
+					) procinst on (task.procinst_id = procinst.procinst_id)
+					left join bpm_re_procdef procdef on (task.procdef_id = procdef.id)
+						where procinst.state &lt; 5
+		</content>
+		
+		<parameters>
+			<parameter name="id" dataType="string" />	
+			<parameter name="type_id" dataType="number" />
+			<parameter name="title" dataType="string" />
+			<parameter name="start_user_id" dataType="string" />
+			<parameter name="name" dataType="string" />		
+			<parameter name="finish_time" dataType="datetime" />
+			<parameter name="task_state" dataType="string" />
+			<parameter name="procinst_state" dataType="string" />
+			<parameter name="business_id" dataType="string" />
+			<parameter name="page_id" dataType="string" />
+		</parameters>	
+	</sql-query>
+</mapping-configuration>
