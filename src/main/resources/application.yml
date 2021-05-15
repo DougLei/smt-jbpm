@@ -1,6 +1,6 @@
 server:
    max-http-header-size: 10000
-   port: 8405
+   port: 8504
    
 jdb:
   orm:
@@ -10,7 +10,7 @@ jdb:
 spring:
   datasource:
         type: com.alibaba.druid.pool.DruidDataSource
-        url: jdbc:sqlserver://192.168.1.111:1433;DatabaseName=SMT_DEV
+        url: jdbc:sqlserver://192.168.1.111:1433;DatabaseName=SMT_ALL
         username: sa
         password: 123_abc
   application: 
@@ -32,4 +32,4 @@ smt:
 eureka:
   client:
     service-url:
-      defaultZone: http://192.168.1.111:8101/eureka/
+      defaultZone: http://192.168.1.252:8501/eureka/
