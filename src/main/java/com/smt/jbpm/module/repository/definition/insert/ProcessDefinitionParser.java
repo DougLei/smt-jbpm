@@ -16,7 +16,7 @@ import com.douglei.orm.context.PropagationBehavior;
 import com.douglei.orm.context.SessionContext;
 import com.douglei.orm.context.Transaction;
 import com.douglei.orm.context.TransactionComponent;
-import com.smt.jbpm.ProcessWebException;
+import com.smt.jbpm.SmtJbpmException;
 import com.smt.jbpm.module.repository.definition.insert.json.NodeJsonFactory;
 import com.smt.jbpm.module.repository.definition.insert.json.ProcessNodeJson;
 import com.smt.jbpm.module.repository.definition.insert.json.edge.EdgeJson;
@@ -170,7 +170,7 @@ public class ProcessDefinitionParser {
 	 * 
 	 * @author DougLei
 	 */
-	private class ValidatorException extends ProcessWebException {
+	private class ValidatorException extends SmtJbpmException {
 		private String message;
 		private String code;
 		private Object[] params;

@@ -28,7 +28,7 @@ import com.douglei.bpm.process.mapping.metadata.task.user.option.dispatch.BackOp
 import com.douglei.bpm.process.mapping.metadata.task.user.option.dispatch.JumpOption;
 import com.douglei.orm.context.SessionContext;
 import com.douglei.tools.OgnlUtil;
-import com.smt.jbpm.ProcessWebException;
+import com.smt.jbpm.SmtJbpmException;
 import com.smt.jbpm.module.execution.task.button.BackstepsHandleButton;
 import com.smt.jbpm.module.execution.task.button.HandleButton;
 import com.smt.jbpm.module.execution.task.button.OptionButton;
@@ -59,7 +59,7 @@ public class EnterTaskCmd {
 		
 		this.handleModes= queryHandleMode();
 		if(handleModes == null)
-			throw new ProcessWebException("用户["+userId+"]目前不拥有任务["+taskinstId+"]的办理权限, 无法操作任务");
+			throw new SmtJbpmException("用户["+userId+"]目前不拥有任务["+taskinstId+"]的办理权限, 无法操作任务");
 	}
 	
 	/**
@@ -81,7 +81,7 @@ public class EnterTaskCmd {
 		// 构建TaskDetail实例
 		this.detail = SessionContext.getSQLSession().uniqueQuery(TaskDetail.class, "EnterTask", "querTaskDetail", taskinstId);
 		if(!this.detail.isActive())
-			throw new ProcessWebException("["+detail.getName()+"]任务处于挂起状态, 无法进入");
+			throw new SmtJbpmException("["+detail.getName()+"]任务处于挂起状态, 无法进入");
 
 		this.processMetadata = processEngineBeans.getProcessContainer().getProcess(detail.getProcdefId());
 		this.taskMetadataEntity = processMetadata.getTaskMetadataEntity(detail.getKey());
@@ -246,7 +246,7 @@ public class EnterTaskCmd {
 					buttons.add(new BackstepsHandleButton(
 							backOption.getType(), backOption.getName(), backOption.suggestIsRequired(), backOption.attitudeIsRequired(), backOption.getSteps()));
 				}
-				throw new ProcessWebException("在获取调度性的Option按钮时, 无法解析["+option.getClass()+"]类型的Option实例");
+				throw new SmtJbpmException("在获取调度性的Option按钮时, 无法解析["+option.getClass()+"]类型的Option实例");
 			}
 		}
 		return buttons;

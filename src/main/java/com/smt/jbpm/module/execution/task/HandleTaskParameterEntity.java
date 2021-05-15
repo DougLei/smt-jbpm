@@ -19,7 +19,7 @@ import com.douglei.bpm.process.mapping.metadata.task.user.UserTaskMetadata;
 import com.douglei.bpm.process.mapping.metadata.task.user.option.Option;
 import com.douglei.bpm.process.mapping.metadata.task.user.option.dispatch.BackOption;
 import com.douglei.bpm.process.mapping.metadata.task.user.option.dispatch.JumpOption;
-import com.smt.jbpm.ProcessWebException;
+import com.smt.jbpm.SmtJbpmException;
 
 /**
  * 办理任务参数实体
@@ -88,7 +88,7 @@ public class HandleTaskParameterEntity {
 			if(!targetExists) {
 				FlowMetadata defaultFlow = taskMetadataEntity.getDefaultOutputFlow();
 				if(defaultFlow == null || !defaultFlow.getTarget().equals(target))
-					throw new ProcessWebException("buildDispatchExecutor失败, 参数不合法: taskinstId="+taskinstId+", ButtonType=flow, target="+target);
+					throw new SmtJbpmException("buildDispatchExecutor失败, 参数不合法: taskinstId="+taskinstId+", ButtonType=flow, target="+target);
 			}
 			return new DispatchEntity(new SettargetDispatchExecutor(target), new AssigneeHandler()); 
 		}
@@ -108,7 +108,7 @@ public class HandleTaskParameterEntity {
 			
 			if(jumpOption!=null)
 				return new DispatchEntity(new SettargetDispatchExecutor(target), new AssigneeHandler4Jump(jumpOption)); 
-			throw new ProcessWebException("buildDispatchExecutor失败, 参数不合法: taskinstId="+taskinstId+", ButtonType="+OptionTypeConstants.JUMP+", target="+target);
+			throw new SmtJbpmException("buildDispatchExecutor失败, 参数不合法: taskinstId="+taskinstId+", ButtonType="+OptionTypeConstants.JUMP+", target="+target);
 		}
 		
 		// 验证实际传入的steps是否存在于配置中
@@ -126,9 +126,9 @@ public class HandleTaskParameterEntity {
 			
 			if(stepsExists)
 				return new DispatchEntity(new BackstepsDispatchExecutor(steps), new AssigneeHandler4Backsteps()); 
-			throw new ProcessWebException("buildDispatchExecutor失败, 参数不合法: taskinstId="+taskinstId+", ButtonType="+OptionTypeConstants.BACK+", steps="+steps);
+			throw new SmtJbpmException("buildDispatchExecutor失败, 参数不合法: taskinstId="+taskinstId+", ButtonType="+OptionTypeConstants.BACK+", steps="+steps);
 		}
-		throw new ProcessWebException("buttonType的值["+buttonType+"]不合法");
+		throw new SmtJbpmException("buttonType的值["+buttonType+"]不合法");
 	}
 	
 	/**

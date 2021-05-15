@@ -12,7 +12,7 @@ import com.douglei.bpm.module.repository.type.Type;
 import com.douglei.orm.context.SessionContext;
 import com.douglei.orm.context.Transaction;
 import com.douglei.orm.context.TransactionComponent;
-import com.smt.jbpm.ProcessWebException;
+import com.smt.jbpm.SmtJbpmException;
 import com.smt.parent.code.response.Response;
 
 /**
@@ -41,7 +41,7 @@ public class TypeService {
 				parentId.set(0, Integer.parseInt(SessionContext.getSqlSession().uniqueQuery_("select parent_id from bpm_re_type where id=?", parentId)[0].toString()));
 			
 			if(((Integer)parentId.get(0)) > 0)
-				throw new ProcessWebException("流程类型树最多支持"+flag+"层结构");
+				throw new SmtJbpmException("流程类型树最多支持"+flag+"层结构");
 		}
 		
 		Result result = repositoryModule.getTypeService().insert(type);
@@ -59,7 +59,7 @@ public class TypeService {
 	public Response update(Type type) {
 		int oldParentId = Integer.parseInt(SessionContext.getSqlSession().uniqueQuery_("select parent_id from bpm_re_type where id=?", Arrays.asList(type.getId()))[0].toString());
 		if(type.getParentId() != oldParentId)
-			throw new ProcessWebException("不支持修改流程类型的parentId");
+			throw new SmtJbpmException("不支持修改流程类型的parentId");
 		
 		Result result = repositoryModule.getTypeService().update(type);
 		if(result.isFail())

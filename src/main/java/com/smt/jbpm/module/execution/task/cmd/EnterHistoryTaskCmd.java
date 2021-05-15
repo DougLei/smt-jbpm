@@ -5,7 +5,7 @@ import java.util.List;
 
 import com.douglei.bpm.ProcessEngineBeans;
 import com.douglei.orm.context.SessionContext;
-import com.smt.jbpm.ProcessWebException;
+import com.smt.jbpm.SmtJbpmException;
 
 /**
  * 
@@ -28,7 +28,7 @@ public class EnterHistoryTaskCmd {
 		// 获取之前的办理意见和办理态度
 		List<Object[]> results = SessionContext.getSqlSession().limitQuery_(1, 1, "select distinct suggest, attitude from bpm_hi_assignee where taskinst_id=? and handle_state=6 and user_id=?", Arrays.asList(taskinstId, userId));
 		if(results.isEmpty())
-			throw new ProcessWebException("["+userId+"]用户未办理过["+taskinstId+"]任务");
+			throw new SmtJbpmException("["+userId+"]用户未办理过["+taskinstId+"]任务");
 		
 		// 构建TaskDetail实例
 		TaskDetail detail = SessionContext.getSQLSession().uniqueQuery(TaskDetail.class, "EnterTask", "querHistoryTaskDetail", taskinstId);

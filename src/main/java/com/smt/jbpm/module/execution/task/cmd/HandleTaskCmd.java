@@ -13,7 +13,7 @@ import com.douglei.bpm.process.Type;
 import com.douglei.bpm.process.mapping.metadata.TaskMetadata;
 import com.douglei.bpm.process.mapping.metadata.TaskMetadataEntity;
 import com.douglei.orm.context.SessionContext;
-import com.smt.jbpm.ProcessWebException;
+import com.smt.jbpm.SmtJbpmException;
 import com.smt.jbpm.module.execution.task.HandleTaskParameterEntity;
 import com.smt.jbpm.module.execution.task.button.OptionButton;
 import com.smt.parent.code.response.Response;
@@ -43,7 +43,7 @@ public class HandleTaskCmd {
 	 */
 	public Response execute() {
 		if(taskMetadataEntity.getTaskMetadata().getType() != Type.USER_TASK)
-			throw new ProcessWebException("不能办理非用户任务");
+			throw new SmtJbpmException("不能办理非用户任务");
 		
 		Result result = executionModule.getTaskService().handle(entity.getTaskinstId(), entity.buildHandleTaskParameter());
 		if(result.isFail())

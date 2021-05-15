@@ -29,7 +29,7 @@ import com.douglei.bpm.process.mapping.metadata.task.user.option.dispatch.JumpOp
 import com.douglei.bpm.process.mapping.metadata.task.user.option.transfer.TransferOption;
 import com.douglei.orm.context.SessionContext;
 import com.douglei.tools.OgnlUtil;
-import com.smt.jbpm.ProcessWebException;
+import com.smt.jbpm.SmtJbpmException;
 import com.smt.jbpm.query.QueryCriteriaEntity;
 
 /**
@@ -59,7 +59,7 @@ public class QueryAssignableUserCmd {
 		
 		this.task = SessionContext.getTableSession().uniqueQuery(Task.class, "select * from bpm_ru_task where taskinst_id=?", Arrays.asList(taskinstId));
 		if(task == null)
-			throw new ProcessWebException("不存在id为["+taskinstId+"]的任务");
+			throw new SmtJbpmException("不存在id为["+taskinstId+"]的任务");
 		this.processMetadata = processEngineBeans.getProcessContainer().getProcess(task.getProcdefId());
 	}
 
@@ -97,7 +97,7 @@ public class QueryAssignableUserCmd {
 				}
 			}
 			if(option == null)
-				throw new ProcessWebException("无法查询跳转的指派用户集合, taskinstId=["+taskinstId+"], target=["+target+"]");
+				throw new SmtJbpmException("无法查询跳转的指派用户集合, taskinstId=["+taskinstId+"], target=["+target+"]");
 			if(option.getCandidate() != null && option.getCandidate().getAssignPolicy().isDynamic()) 
 				return option.getCandidate().getAssignPolicy();
 			return getAssignPolicy4Target(target, null);
@@ -108,7 +108,7 @@ public class QueryAssignableUserCmd {
 			UserTaskMetadata taskMetadata = (UserTaskMetadata) processMetadata.getTaskMetadataEntity(task.getKey()).getTaskMetadata();
 			CarbonCopyOption option = (CarbonCopyOption) taskMetadata.getOption(OptionTypeConstants.CARBON_COPY);
 			if(option == null)
-				throw new ProcessWebException("无法查询抄送的指派用户集合, taskinstId=["+taskinstId+"]");
+				throw new SmtJbpmException("无法查询抄送的指派用户集合, taskinstId=["+taskinstId+"]");
 			return option.getCandidate().getAssignPolicy();
 		}
 		
@@ -117,7 +117,7 @@ public class QueryAssignableUserCmd {
 			UserTaskMetadata taskMetadata = (UserTaskMetadata) processMetadata.getTaskMetadataEntity(task.getKey()).getTaskMetadata();
 			DelegateOption option = (DelegateOption) taskMetadata.getOption(OptionTypeConstants.DELEGATE);
 			if(option == null)
-				throw new ProcessWebException("无法查询委托的指派用户集合, taskinstId=["+taskinstId+"]");
+				throw new SmtJbpmException("无法查询委托的指派用户集合, taskinstId=["+taskinstId+"]");
 			
 			if(option.getCandidate() != null)
 				return option.getCandidate().getAssignPolicy();
@@ -129,14 +129,14 @@ public class QueryAssignableUserCmd {
 			UserTaskMetadata taskMetadata = (UserTaskMetadata) processMetadata.getTaskMetadataEntity(task.getKey()).getTaskMetadata();
 			TransferOption option = (TransferOption) taskMetadata.getOption(OptionTypeConstants.TRANSFER);
 			if(option == null)
-				throw new ProcessWebException("无法查询转办的指派用户集合, taskinstId=["+taskinstId+"]");
+				throw new SmtJbpmException("无法查询转办的指派用户集合, taskinstId=["+taskinstId+"]");
 			
 			if(option.getCandidate() != null)
 				return option.getCandidate().getAssignPolicy();
 			return taskMetadata.getCandidate().getAssignPolicy();
 		}
 		
-		throw new ProcessWebException("查询指派用户集合时, 目前不支持buttonType=["+buttonType+"]的类型");
+		throw new SmtJbpmException("查询指派用户集合时, 目前不支持buttonType=["+buttonType+"]的类型");
 	}
 	
 	/**
