@@ -1,9 +1,16 @@
 *********************************************************************************
+写在前面
+*********************************************************************************
+1. api统一前缀: smt-jbpm
+
+
+
+*********************************************************************************
 流程类型
 *********************************************************************************
 
 --增加
-http://192.168.1.111:8405/process/type/insert
+http://192.168.1.111:8504/smt-jbpm/process/type/insert
 POST
 {
 	"parentId": 0,  -- 父类型id, 数字类型, 默认值为0, 可不填
@@ -13,7 +20,7 @@ POST
 
 
 --修改
-http://192.168.1.111:8405/process/type/update
+http://192.168.1.111:8504/smt-jbpm/process/type/update
 POST
 {
 	"id":1, -- 类型id, 数字类型, 必填
@@ -23,25 +30,27 @@ POST
 }
 
 --删除
-http://192.168.1.111:8405/process/type/delete/{type}  -- 类型id
+http://192.168.1.111:8504/smt-jbpm/process/type/delete/{type}  -- 类型id
 DELETE
 
 
-
 --查询
-http://192.168.1.111:8405/process/type/query  
+http://192.168.1.111:8504/smt-jbpm/process/type/query  
 POST
 
 --查询指定id的请求体
 { 
 	"$mode$":"UNIQUE_QUERY",
-	"ID":"EQ(1)"
+	"ID":"EQ(1)",
+	"TENANT_ID": "EQ(xxxxxx)" -- 租户id, 从token中取
 }
 --递归查询所有的请求体
 {
 	"$mode$":"RECURSIVE_QUERY",
-	"$values$":"0"
+	"$values$":"0",
+	"TENANT_ID": "EQ(xxxxxx)" -- 租户id, 从token中取
 }
+
 
 
 *********************************************************************************
@@ -49,7 +58,7 @@ POST
 *********************************************************************************
 
 --字典查询
-http://192.168.1.111:8405/process/dictionary/query/{type} --字典类型(字符串)
+http://192.168.1.111:8504/smt-jbpm/process/dictionary/query/{type} --字典类型(字符串)
 GET
 
 type目前包括的值(不区分大小写):
@@ -60,12 +69,13 @@ SERIAL_HANDLE_POLICY	-- 串行办理任务时, 办理顺序的策略
 USER_TASK_OPTION	-- 用户任务操作
 
 
+
 *********************************************************************************
 流程定义
 *********************************************************************************
 
 --查询
-http://192.168.1.111:8405/process/definition/query
+http://192.168.1.111:8504/smt-jbpm/process/definition/query
 POST
 {
 	"$mode$":"QUERY",
@@ -79,15 +89,16 @@ POST
 	"IS_MAJOR_VERSION": "EQ(1)", --IS_MAJOR_VERSION标识是否主版本, 1是0否
 	"IS_MAJOR_SUBVERSION": "EQ(1)", --IS_MAJOR_SUBVERSION标识是否激活, 1是0否
 
-	"CREATE_DATE" : "ORDER(DESC)" --创建日期倒排序
+	"CREATE_DATE" : "ORDER(DESC)", --创建日期倒排序
+	"TENANT_ID": "EQ(xxxxxx)" -- 租户id, 从token中取
 }
 
 --查询ById
-http://192.168.1.111:8405/process/definition/query/{procdefId} -- 流程定义id
+http://192.168.1.111:8504/smt-jbpm/process/definition/query/{procdefId} -- 流程定义id
 GET
 
 --增加/修改
-http://192.168.1.111:8405/process/definition/insert
+http://192.168.1.111:8504/smt-jbpm/process/definition/insert
 POST
 {
 	"struct": "", --设计的流程json结构(字符串)
@@ -95,28 +106,29 @@ POST
 }
 
 --部署
-http://192.168.1.111:8405/process/definition/deploy/{procdefId} -- 流程定义id
+http://192.168.1.111:8504/smt-jbpm/process/definition/deploy/{procdefId} -- 流程定义id
 POST
 
 --取消部署
-http://192.168.1.111:8405/process/definition/undeploy/{procdefId} -- 流程定义id
+http://192.168.1.111:8504/smt-jbpm/process/definition/undeploy/{procdefId} -- 流程定义id
 POST
 
 --删除
-http://192.168.1.111:8405/process/definition/delete/{procdefId} -- 流程定义id
+http://192.168.1.111:8504/smt-jbpm/process/definition/delete/{procdefId} -- 流程定义id
 DELETE
 
 --物理删除
-http://192.168.1.111:8405/process/definition/delete/physical/{procdefId} -- 流程定义id
+http://192.168.1.111:8504/smt-jbpm/process/definition/delete/physical/{procdefId} -- 流程定义id
 DELETE
 
 --设置流程的主要子版本
-http://192.168.1.111:8405/process/definition/set/majorSubversion/{procdefId} -- 流程定义id
+http://192.168.1.111:8504/smt-jbpm/process/definition/set/majorSubversion/{procdefId} -- 流程定义id
 POST
 
 --撤销删除
-http://192.168.1.111:8405/process/definition/undoDelete/{procdefId} -- 流程定义id
+http://192.168.1.111:8504/smt-jbpm/process/definition/undoDelete/{procdefId} -- 流程定义id
 POST
+
 
 
 *********************************************************************************
@@ -124,15 +136,15 @@ POST
 *********************************************************************************
 
 --唤醒指定id的流程实例
-http://192.168.1.111:8405/process/instance/wake/{procinstId} -- 流程实例id
+http://192.168.1.111:8504/smt-jbpm/process/instance/wake/{procinstId} -- 流程实例id
 POST
 
 --挂起指定id的流程实例
-http://192.168.1.111:8405/process/instance/suspend/{procinstId} -- 流程实例id
+http://192.168.1.111:8504/smt-jbpm/process/instance/suspend/{procinstId} -- 流程实例id
 POST
 
 --终止指定id的流程实例
-http://192.168.1.111:8405/process/instance/terminate
+http://192.168.1.111:8504/smt-jbpm/process/instance/terminate
 POST
 {
 	"procinstId":"", --流程实例id
@@ -141,23 +153,23 @@ POST
 }
 
 --删除指定id的流程实例
-http://192.168.1.111:8405/process/instance/delete/{procinstId} -- 流程实例id
+http://192.168.1.111:8504/smt-jbpm/process/instance/delete/{procinstId} -- 流程实例id
 POST
 
 --撤销删除指定id的流程实例
-http://192.168.1.111:8405/process/instance/undoDelete/{procinstId} -- 流程实例id
+http://192.168.1.111:8504/smt-jbpm/process/instance/undoDelete/{procinstId} -- 流程实例id
 POST
 
 --物理删除指定id的流程实例
-http://192.168.1.111:8405/process/instance/delete/physical/{procinstId} -- 流程实例id
+http://192.168.1.111:8504/smt-jbpm/process/instance/delete/physical/{procinstId} -- 流程实例id
 POST
 
 --恢复指定id的流程实例(从终止状态到运行状态)
-http://192.168.1.111:8405/process/instance/recovery/{procinstId} -- 流程实例id
+http://192.168.1.111:8504/smt-jbpm/process/instance/recovery/{procinstId} -- 流程实例id
 POST
 
 --启动流程
-http://192.168.1.111:8405/process/instance/start
+http://192.168.1.111:8504/smt-jbpm/process/instance/start
 POST
 {
 	"code":"", -- 流程code
@@ -170,7 +182,7 @@ POST
 }
 
 --查询流程实例
-http://192.168.1.111:8405/process/instance/query
+http://192.168.1.111:8504/smt-jbpm/process/instance/query
 POST
 {
 	"$mode$":"QUERY",
@@ -192,7 +204,7 @@ POST
 
 
 --查询我的待办
-http://192.168.1.111:8405/process/user/todo/query/{userId} -- 用户id
+http://192.168.1.111:8504/smt-jbpm/process/user/todo/query/{userId} -- 用户id
 POST
 {
 	"$mode$":"QUERY",
@@ -207,7 +219,7 @@ POST
 }
 
 --查询我的已办
-http://192.168.1.111:8405/process/user/done/query/{userId} -- 用户id
+http://192.168.1.111:8504/smt-jbpm/process/user/done/query/{userId} -- 用户id
 POST
 {
 	"$mode$":"QUERY",
@@ -223,7 +235,7 @@ POST
 }
 
 --流程跟踪主体查询
-http://192.168.1.111:8405/process/track/subject/query/{procinstId} --流程实例id
+http://192.168.1.111:8504/smt-jbpm/process/track/subject/query/{procinstId} --流程实例id
 GET
 --响应体结构
 {
@@ -264,7 +276,7 @@ GET
 }
 
 --流程跟踪任务办理明细查询
-http://192.168.1.111:8405/process/track/detail/query/{procinstId}/{taskKey} --流程实例id/任务key(配置文件中的id值)
+http://192.168.1.111:8504/smt-jbpm/process/track/detail/query/{procinstId}/{taskKey} --流程实例id/任务key(配置文件中的id值)
 GET
 --响应体结构
 {
@@ -309,12 +321,14 @@ GET
     "warn": null
 }
 
+
+
 *********************************************************************************
 任务实例
 *********************************************************************************
 
 --进入任务
-http://192.168.1.111:8405/task/enter/{taskinstId}/{userId} -- 任务实例id(我的待办中查出来的id)/用户id
+http://192.168.1.111:8504/smt-jbpm/task/enter/{taskinstId}/{userId} -- 任务实例id(我的待办中查出来的id)/用户id
 GET
 --响应体结构
 {
@@ -377,7 +391,7 @@ GET
 }
 
 --进入历史任务
-http://192.168.1.111:8405/task/history/enter/{taskinstId}/{userId} -- 任务实例id(我的待办中查出来的id)/用户id
+http://192.168.1.111:8504/smt-jbpm/task/history/enter/{taskinstId}/{userId} -- 任务实例id(我的待办中查出来的id)/用户id
 GET
 --响应体结构
 {
@@ -400,16 +414,16 @@ GET
 }
 
 --认领任务
-http://192.168.1.111:8405/task/claim/{taskinstId}/{userId} -- 任务实例id/用户id
+http://192.168.1.111:8504/smt-jbpm/task/claim/{taskinstId}/{userId} -- 任务实例id/用户id
 POST
 --响应体与进入任务的响应体保持一致
 
 --取消认领任务
-http://192.168.1.111:8405/task/unclaim/{taskinstId}/{userId} -- 任务实例id/用户id
+http://192.168.1.111:8504/smt-jbpm/task/unclaim/{taskinstId}/{userId} -- 任务实例id/用户id
 POST
 
 --查询可指派的用户集合
-http://192.168.1.111:8405/task/assignableUser/query
+http://192.168.1.111:8504/smt-jbpm/task/assignableUser/query
 POST
 {
 	"userId":"必须传入", --当前操作的用户id
@@ -427,7 +441,7 @@ POST
 }
 
 --办理任务
-http://192.168.1.111:8405/task/handle 
+http://192.168.1.111:8504/smt-jbpm/task/handle 
 POST
 {
 	"taskinstId":"", --办理的任务实例id
@@ -454,7 +468,7 @@ POST
 }
 
 --调度任务
-http://192.168.1.111:8405/task/dispatch 
+http://192.168.1.111:8504/smt-jbpm/task/dispatch 
 POST
 {
 	"taskinstId":"", --办理的任务实例id
@@ -477,18 +491,20 @@ POST
     "warn": null
 }
 
+
+
 *********************************************************************************
 后续需要修改userId的接口有
 *********************************************************************************
-http://192.168.1.111:8405/process/instance/terminate
-http://192.168.1.111:8405/process/user/todo/query/{userId}
-http://192.168.1.111:8405/process/user/done/query/{userId}
-http://192.168.1.111:8405/task/enter/{taskinstId}/{userId} 
-http://192.168.1.111:8405/task/claim/{taskinstId}/{userId}
-http://192.168.1.111:8405/task/unclaim/{taskinstId}/{userId}
-http://192.168.1.111:8405/task/handle
-http://192.168.1.111:8405/process/task/assignableUser/query
-http://192.168.1.111:8405/task/dispatch
+http://192.168.1.111:8504/smt-jbpm/process/instance/terminate
+http://192.168.1.111:8504/smt-jbpm/process/user/todo/query/{userId}
+http://192.168.1.111:8504/smt-jbpm/process/user/done/query/{userId}
+http://192.168.1.111:8504/smt-jbpm/task/enter/{taskinstId}/{userId} 
+http://192.168.1.111:8504/smt-jbpm/task/claim/{taskinstId}/{userId}
+http://192.168.1.111:8504/smt-jbpm/task/unclaim/{taskinstId}/{userId}
+http://192.168.1.111:8504/smt-jbpm/task/handle
+http://192.168.1.111:8504/smt-jbpm/process/task/assignableUser/query
+http://192.168.1.111:8504/smt-jbpm/task/dispatch
 
 
 
