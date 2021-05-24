@@ -49,7 +49,7 @@ public class AllUserExpression implements AssignableUserExpression {
 			
 			@Override
 			public String getUrl() {
-				return "http://smt-base/user/query";
+				return "http://smt-base/smt-base/user/query";
 			}
 			
 		}, JSONObject.toJSONString(requestBody), APIGeneralResponse.class);

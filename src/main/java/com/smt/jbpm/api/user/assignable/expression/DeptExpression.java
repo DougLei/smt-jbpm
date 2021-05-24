@@ -47,7 +47,7 @@ public class DeptExpression implements AssignableUserExpression {
 			
 			@Override
 			public String getUrl() {
-				return "http://smt-base/data/rel/value/query";
+				return "http://smt-base/smt-base/data/rel/value/query";
 			}
 			
 		}, JSONObject.toJSONString(requestBody), APIGeneralResponse.class);
