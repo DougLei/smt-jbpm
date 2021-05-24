@@ -10,11 +10,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.smt.jbpm.api.user.assignable.expression.AllUserExpression;
-import com.smt.jbpm.api.user.assignable.expression.DeptExpression;
-import com.smt.jbpm.api.user.assignable.expression.PostExpression;
-import com.smt.jbpm.api.user.assignable.expression.RoleExpression;
-import com.smt.jbpm.api.user.assignable.expression.StarterExpression;
 import com.smt.parent.code.response.Response;
 
 /**
@@ -31,11 +26,11 @@ public class DictionaryController {
 		List<Object> list1 = new ArrayList<Object>(2);
 		list1.add(new Expression("fixed", "按用户", true));
 		list1.add(new Expression("variable", "按流程变量", true));
-		list1.add(new Expression(DeptExpression.class.getName(), "按部门", true));
-		list1.add(new Expression(RoleExpression.class.getName(), "按角色", true));
-		list1.add(new Expression(PostExpression.class.getName(), "按岗位", true));
-		list1.add(new Expression(StarterExpression.class.getName(), "流程发起人", false));
-		list1.add(new Expression(AllUserExpression.class.getName(), "所有人", false));
+		list1.add(new Expression("dept", "按部门", true));
+		list1.add(new Expression("role", "按角色", true));
+		list1.add(new Expression("post", "按岗位", true));
+		list1.add(new Expression("starter", "流程发起人", false));
+		list1.add(new Expression("allUser", "所有人", false));
 		dictionary.put("ASSIGNABLE_USER_EXPRESSION", list1);
 		
 		// 任务认领策略

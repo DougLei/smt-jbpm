@@ -10,9 +10,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.douglei.bpm.module.repository.type.Type;
-import com.smt.jbpm.query.QueryCriteria;
-import com.smt.jbpm.query.QueryCriteriaEntity;
-import com.smt.jbpm.query.QueryExecutor;
+import com.smt.parent.code.filters.token.TokenContext;
+import com.smt.parent.code.query.QueryCriteria;
+import com.smt.parent.code.query.QueryCriteriaEntity;
+import com.smt.parent.code.query.QueryExecutor;
 import com.smt.parent.code.response.Response;
 import com.smt.parent.code.spring.web.LoggingResponse;
 
@@ -35,10 +36,10 @@ public class TypeController {
 	 * @param entity
 	 * @return
 	 */
-	@LoggingResponse
+	@LoggingResponse(loggingBody=false)
 	@RequestMapping(value="/query", method=RequestMethod.POST)
 	public Response query(@QueryCriteria QueryCriteriaEntity entity) {
-		return queryExecutor.execute("QueryProcessTypeList", null, entity);
+		return queryExecutor.execute("QueryProcessTypeList", TokenContext.get().getTenantId(), entity);
 	}
 	
 	/**
@@ -49,6 +50,7 @@ public class TypeController {
 	@LoggingResponse
 	@RequestMapping(value="/insert", method=RequestMethod.POST)
 	public Response insert(@RequestBody Type type) {
+		type.setTenantId(TokenContext.get().getTenantId());
 		return typeService.insert(type);
 	}
 	
@@ -60,6 +62,7 @@ public class TypeController {
 	@LoggingResponse
 	@RequestMapping(value="/update", method=RequestMethod.POST)
 	public Response update(@RequestBody Type type) {
+		type.setTenantId(TokenContext.get().getTenantId());
 		return typeService.update(type);
 	}
 	

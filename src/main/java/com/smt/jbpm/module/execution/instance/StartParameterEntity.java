@@ -7,6 +7,8 @@ import com.douglei.bpm.module.Result;
 import com.douglei.bpm.module.execution.instance.command.parameter.StartParameter;
 import com.douglei.bpm.module.execution.variable.Scope;
 import com.douglei.tools.StringUtil;
+import com.smt.parent.code.filters.token.TokenContext;
+import com.smt.parent.code.filters.token.TokenEntity;
 
 /**
  * 
@@ -15,11 +17,7 @@ import com.douglei.tools.StringUtil;
 public class StartParameterEntity {
 	private String code;
 	private String version;
-	private String tenantId;
-	
-	private String userId; // 当前的用户id
 	private HashSet<String> assignedUserIds; // 指派的用户id集合
-	
 	private String businessId; // 当前的业务id
 	private Map<String, Object> businessData; // 当前的业务数据
 	
@@ -30,16 +28,15 @@ public class StartParameterEntity {
 	public Result validateAndBuild() {
 		if(StringUtil.isEmpty(code))
 			return new Result("启动的流程定义code不能为空", "smt.jbpm.process.start.fail.code.notnull");
-		if(StringUtil.isEmpty(userId))
-			return new Result("启动的用户id不能为空", "smt.jbpm.process.start.fail.user.id.notnull");		
 		if(StringUtil.isEmpty(businessId))
 			return new Result("启动的业务id不能为空", "smt.jbpm.process.start.fail.business.id.notnull");
 		
 		// 构建StartParameter实例
-		StartParameter parameter = new StartParameter(code, version, tenantId);
-		parameter.setUserId(userId);
+		TokenEntity token = TokenContext.get();
+		StartParameter parameter = new StartParameter(code, version, token.getTenantId());
+		parameter.setUserId(token.getUserId());
 		if(assignedUserIds == null) {
-			parameter.getAssignEntity().addAssignedUserId(userId);
+			parameter.getAssignEntity().addAssignedUserId(token.getUserId());
 		}else {
 			parameter.getAssignEntity().addAssignedUserIds(assignedUserIds);
 		}
@@ -61,18 +58,6 @@ public class StartParameterEntity {
 	}
 	public void setVersion(String version) {
 		this.version = version;
-	}
-	public String getTenantId() {
-		return tenantId;
-	}
-	public void setTenantId(String tenantId) {
-		this.tenantId = tenantId;
-	}
-	public String getUserId() {
-		return userId;
-	}
-	public void setUserId(String userId) {
-		this.userId = userId;
 	}
 	public HashSet<String> getAssignedUserIds() {
 		return assignedUserIds;

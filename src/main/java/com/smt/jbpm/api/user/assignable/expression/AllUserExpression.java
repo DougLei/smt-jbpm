@@ -1,17 +1,25 @@
 package com.smt.jbpm.api.user.assignable.expression;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import com.alibaba.fastjson.JSONObject;
 import com.douglei.bpm.process.api.user.assignable.expression.AssignableUserExpression;
 import com.douglei.bpm.process.api.user.assignable.expression.AssignableUserExpressionParameter;
-import com.douglei.orm.context.SessionContext;
+import com.smt.parent.code.spring.eureka.cloud.feign.APIGeneralResponse;
+import com.smt.parent.code.spring.eureka.cloud.feign.APIGeneralServer;
+import com.smt.parent.code.spring.eureka.cloud.feign.RestTemplateWrapper;
 
 /**
- * 指派流程发起人
+ * 
  * @author DougLei
  */
 public class AllUserExpression implements AssignableUserExpression {
+	private RestTemplateWrapper restTemplate;
+	public AllUserExpression(RestTemplateWrapper restTemplate) {
+		this.restTemplate = restTemplate;
+	}
 
 	@Override
 	public String getName() {
@@ -23,16 +31,32 @@ public class AllUserExpression implements AssignableUserExpression {
 		return false;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<String> getUserIds(String value, AssignableUserExpressionParameter parameter) {
-		// 查询所有用户id集合
-		List<Object[]> list = SessionContext.getSqlSession().query_("select id from smt_imp_user");
-		if(list.isEmpty())
-			return null;
+		// 构建请求体
+		Map<String, Object> requestBody = new HashMap<String, Object>(4);
+		requestBody.put("$mode$", "QUERY");
+		requestBody.put("ID", "RESULT()");
 		
-		List<String> userIds = new ArrayList<String>(list.size());
-		for (Object[] array : list) 
-			userIds.add(array[0].toString());
+		// 发起api请求
+		List<String> userIds = (List<String>)restTemplate.generalExchange(new APIGeneralServer() {
+			
+			@Override
+			public String getName() {
+				return "(同步)查询所有用户id集合";
+			}
+			
+			@Override
+			public String getUrl() {
+				return "http://smt-base/user/query";
+			}
+			
+		}, JSONObject.toJSONString(requestBody), APIGeneralResponse.class);
+		
+		// 返回查询的结果
+		if(userIds == null || userIds.isEmpty())
+			return null;
 		return userIds;
 	}
 }

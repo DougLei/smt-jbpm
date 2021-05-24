@@ -7,9 +7,8 @@
 			<column name="PROCDEF_ID" property="procdefId" dataType="number" length="10" nullable="false"/>
 			<column name="STRUCT" property="struct" dataType="clob" nullable="false" />
 			<column name="IMAGE" property="image" dataType="clob" nullable="false" />
-			<column name="CREATE_DATE" property="createDate" dataType="datetime" nullable="false" />
-			<column name="LAST_UPDATE_DATE" property="lastUpdateDate" dataType="datetime" nullable="false" />
 			<column name="PAGE_ID" property="pageId" dataType="string" length="500"/>
+			<column name="CREATE_DATE" property="createDate" dataType="datetime" nullable="false" />
 		</columns>
 		
 		<constraints>

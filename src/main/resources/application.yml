@@ -29,6 +29,9 @@ smt:
         log:
           ignore-url-patterns:
           - /process/dictionary
+        token:
+          ignore-url-patterns:
+          - /process/dictionary
 
 # 指定该服务要注册进指定url的服务注册中心  
 eureka:

@@ -15,6 +15,7 @@ import com.douglei.orm.context.Transaction;
 import com.douglei.orm.context.TransactionComponent;
 import com.smt.jbpm.module.repository.definition.insert.ProcessDefinitionExtend;
 import com.smt.jbpm.module.repository.definition.insert.ProcessDesign;
+import com.smt.parent.code.filters.token.TokenContext;
 import com.smt.parent.code.response.Response;
 
 /**
@@ -37,6 +38,7 @@ public class ProcessDefinitionService {
 	 */
 	@Transaction
 	public Response insert(ProcessDefinitionBuilder builder, String struct, String image, String pageId) {
+		builder.setTenantId(TokenContext.get().getTenantId());
 		Result result = repositoryModule.getDefinitionService().insert(builder);
 		if(result.isFail()) 
 			return new Response(null, null, result.getMessage(), result.getCode(), result.getParams());
@@ -46,12 +48,11 @@ public class ProcessDefinitionService {
 		extend.setProcdefId(result.getObject(ProcessDefinition.class).getId());
 		extend.setStruct(struct);
 		extend.setImage(image);
-		extend.setLastUpdateDate(new Date());
 		extend.setPageId(pageId);
 		
 		Object[] obj = SessionContext.getSqlSession().uniqueQuery_("select id from bpm_re_procdef_extend where procdef_id=?", Arrays.asList(extend.getProcdefId()));
 		if(obj == null) {
-			extend.setCreateDate(extend.getLastUpdateDate());
+			extend.setCreateDate(new Date());
 			SessionContext.getTableSession().save(extend);
 		}else {
 			extend.setId(Integer.parseInt(obj[0].toString()));

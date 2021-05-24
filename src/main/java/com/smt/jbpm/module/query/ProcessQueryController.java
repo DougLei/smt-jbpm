@@ -11,9 +11,10 @@ import org.springframework.web.bind.annotation.RestController;
 import com.smt.jbpm.module.query.track.ProcessSubject;
 import com.smt.jbpm.module.query.track.ProcessTrackQuery;
 import com.smt.jbpm.module.query.track.Task;
-import com.smt.jbpm.query.QueryCriteria;
-import com.smt.jbpm.query.QueryCriteriaEntity;
-import com.smt.jbpm.query.QueryExecutor;
+import com.smt.parent.code.filters.token.TokenContext;
+import com.smt.parent.code.query.QueryCriteria;
+import com.smt.parent.code.query.QueryCriteriaEntity;
+import com.smt.parent.code.query.QueryExecutor;
 import com.smt.parent.code.response.Response;
 import com.smt.parent.code.spring.web.LoggingResponse;
 
@@ -33,26 +34,24 @@ public class ProcessQueryController {
 	
 	/**
 	 * 待办查询
-	 * @param userId
 	 * @param entity
 	 * @return
 	 */
-	@LoggingResponse
-	@RequestMapping(value="/user/todo/query/{userId}", method=RequestMethod.POST)
-	public Response todoQuery(@PathVariable String userId, @QueryCriteria QueryCriteriaEntity entity) {
-		return queryExecutor.execute("QueryUserTodoList", userId, entity);
+	@LoggingResponse(loggingBody=false)
+	@RequestMapping(value="/user/todo/query", method=RequestMethod.POST)
+	public Response todoQuery(@QueryCriteria QueryCriteriaEntity entity) {
+		return queryExecutor.execute("QueryUserTodoList", TokenContext.get().getUserId(), entity);
 	}
 	
 	/**
 	 * 已办查询
-	 * @param userId
 	 * @param entity
 	 * @return
 	 */
-	@LoggingResponse
-	@RequestMapping(value="/user/done/query/{userId}", method=RequestMethod.POST)
-	public Response doneQuery(@PathVariable String userId, @QueryCriteria QueryCriteriaEntity entity) {
-		return queryExecutor.execute("QueryUserDoneList", userId, entity);
+	@LoggingResponse(loggingBody=false)
+	@RequestMapping(value="/user/done/query", method=RequestMethod.POST)
+	public Response doneQuery(@QueryCriteria QueryCriteriaEntity entity) {
+		return queryExecutor.execute("QueryUserDoneList", TokenContext.get().getUserId(), entity);
 	}
 	
 	/**
@@ -60,10 +59,10 @@ public class ProcessQueryController {
 	 * @param entity
 	 * @return
 	 */
-	@LoggingResponse
+	@LoggingResponse(loggingBody=false)
 	@RequestMapping(value="/instance/query", method=RequestMethod.POST)
 	public Response instanceQuery(@QueryCriteria QueryCriteriaEntity entity) {
-		return queryExecutor.execute("QueryProcessInstanceList", null, entity);
+		return queryExecutor.execute("QueryProcessInstanceList", TokenContext.get().getTenantId(), entity);
 	}
 	
 	/**
@@ -71,7 +70,7 @@ public class ProcessQueryController {
 	 * @param procinstId
 	 * @return
 	 */
-	@LoggingResponse
+	@LoggingResponse(loggingBody=false)
 	@RequestMapping(value="/track/subject/query/{procinstId}", method=RequestMethod.GET)
 	public Response trackSubjectQuery(@PathVariable String procinstId) {
 		ProcessSubject subject = processTrackQuery.subjectQuery(procinstId);
@@ -84,7 +83,7 @@ public class ProcessQueryController {
 	 * @param taskKey
 	 * @return
 	 */
-	@LoggingResponse
+	@LoggingResponse(loggingBody=false)
 	@RequestMapping(value="/track/detail/query/{procinstId}/{taskKey}", method=RequestMethod.GET)
 	public Response trackDetailQuery(@PathVariable String procinstId, @PathVariable String taskKey) {
 		List<Task> tasks = processTrackQuery.detailQuery(procinstId, taskKey);

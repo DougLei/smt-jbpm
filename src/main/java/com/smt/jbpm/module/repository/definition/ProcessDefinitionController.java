@@ -12,9 +12,10 @@ import com.douglei.bpm.module.repository.RepositoryModule;
 import com.smt.jbpm.module.repository.definition.insert.ParseResult;
 import com.smt.jbpm.module.repository.definition.insert.ProcessDefinitionParser;
 import com.smt.jbpm.module.repository.definition.insert.ProcessDesign;
-import com.smt.jbpm.query.QueryCriteria;
-import com.smt.jbpm.query.QueryCriteriaEntity;
-import com.smt.jbpm.query.QueryExecutor;
+import com.smt.parent.code.filters.token.TokenContext;
+import com.smt.parent.code.query.QueryCriteria;
+import com.smt.parent.code.query.QueryCriteriaEntity;
+import com.smt.parent.code.query.QueryExecutor;
 import com.smt.parent.code.response.Response;
 import com.smt.parent.code.spring.web.LoggingResponse;
 
@@ -43,10 +44,10 @@ public class ProcessDefinitionController {
 	 * @param entity
 	 * @return
 	 */
-	@LoggingResponse
+	@LoggingResponse(loggingBody=false)
 	@RequestMapping(value="/query", method=RequestMethod.POST)
 	public Response query(@QueryCriteria QueryCriteriaEntity entity) {
-		return queryExecutor.execute("QueryProcessDefinitionList", null, entity);
+		return queryExecutor.execute("QueryProcessDefinitionList", TokenContext.get().getTenantId(), entity);
 	}
 	
 	/**
@@ -54,7 +55,7 @@ public class ProcessDefinitionController {
 	 * @param entity
 	 * @return
 	 */
-	@LoggingResponse
+	@LoggingResponse(loggingBody=false)
 	@RequestMapping(value="/query/{procdefId}", method=RequestMethod.GET)
 	public Response queryById(@PathVariable int procdefId) {
 		if(procdefId < 1)

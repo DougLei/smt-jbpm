@@ -9,7 +9,6 @@ import com.douglei.tools.StringUtil;
  */
 public class TerminateParameterEntity {
 	private String procinstId;
-	private String userId;
 	private String reason;
 	
 	/**
@@ -29,12 +28,6 @@ public class TerminateParameterEntity {
 	}
 	public void setProcinstId(String procinstId) {
 		this.procinstId = procinstId;
-	}
-	public String getUserId() {
-		return userId;
-	}
-	public void setUserId(String userId) {
-		this.userId = userId;
 	}
 	public String getReason() {
 		return reason;

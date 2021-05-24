@@ -7,6 +7,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
+import com.alibaba.fastjson.JSONObject;
 import com.douglei.bpm.ProcessEngineBeans;
 import com.douglei.bpm.module.execution.task.runtime.Task;
 import com.douglei.bpm.module.execution.variable.Scope;
@@ -30,7 +31,10 @@ import com.douglei.bpm.process.mapping.metadata.task.user.option.transfer.Transf
 import com.douglei.orm.context.SessionContext;
 import com.douglei.tools.OgnlUtil;
 import com.smt.jbpm.SmtJbpmException;
-import com.smt.jbpm.query.QueryCriteriaEntity;
+import com.smt.parent.code.filters.token.TokenContext;
+import com.smt.parent.code.spring.eureka.cloud.feign.APIGeneralResponse;
+import com.smt.parent.code.spring.eureka.cloud.feign.APIGeneralServer;
+import com.smt.parent.code.spring.eureka.cloud.feign.RestTemplateWrapper;
 
 /**
  * 
@@ -43,18 +47,20 @@ public class QueryAssignableUserCmd {
 	private String buttonType; // 按钮类型
 	private String target; // 目标任务(配置文件中的)id
 	
-	private QueryCriteriaEntity queryCriteriaEntity;
+	private JSONObject requestBody;
+	private RestTemplateWrapper restTemplate;
 	private ProcessEngineBeans processEngineBeans;
 	
 	private Task task;
 	private ProcessMetadata processMetadata;
 	
-	public QueryAssignableUserCmd(String userId, String taskinstId, String buttonType, String target, QueryCriteriaEntity queryCriteriaEntity, ProcessEngineBeans processEngineBeans) {
-		this.userId = userId;
+	public QueryAssignableUserCmd(String taskinstId, String buttonType, String target, JSONObject requestBody, RestTemplateWrapper restTemplate, ProcessEngineBeans processEngineBeans) {
+		this.userId = TokenContext.get().getUserId();
 		this.taskinstId = taskinstId;
 		this.buttonType = buttonType;
 		this.target = target;
-		this.queryCriteriaEntity = queryCriteriaEntity;
+		this.requestBody = requestBody;
+		this.restTemplate = restTemplate;
 		this.processEngineBeans = processEngineBeans;
 		
 		this.task = SessionContext.getTableSession().uniqueQuery(Task.class, "select * from bpm_ru_task where taskinst_id=?", Arrays.asList(taskinstId));
@@ -179,6 +185,7 @@ public class QueryAssignableUserCmd {
 	 * @param assignPolicy
 	 * @return
 	 */
+	@SuppressWarnings("unchecked")
 	private Map<String, Object> buildAssignableUserList(AssignPolicy assignPolicy) {
 		// 查询可指派的人员集合
 		HashSet<String> assignableUserIds = new HashSet<String>();
@@ -191,7 +198,38 @@ public class QueryAssignableUserCmd {
 		
 		Map<String, Object> map = new HashMap<String, Object>(4);
 		map.put("number", assignPolicy.getAssignNumber());
-		map.put("users", assignableUserIds.isEmpty()?Collections.emptyList():queryCriteriaEntity.getMode().executeQuery("QueryAssignableUser", assignableUserIds, queryCriteriaEntity.getParameters()));
+		if(assignableUserIds.isEmpty()) {
+			map.put("users", Collections.emptyList());
+		}else {
+			StringBuilder userIds = new StringBuilder(assignableUserIds.size()*37);
+			assignableUserIds.forEach(userId -> userIds.append(userId).append(','));
+			userIds.setLength(userIds.length()-1);
+			
+			// 根据可指派的人员id集合, 查询并设置对应的用户信息
+			// 构建请求体
+			requestBody.put("$mode$", "QUERY");
+			requestBody.put("ID", "IN("+userIds+")");
+			
+			// 发起api请求
+			List<Object> users = (List<Object>)restTemplate.generalExchange(new APIGeneralServer() {
+				
+				@Override
+				public String getName() {
+					return "(同步)查询指定id的用户集合";
+				}
+				
+				@Override
+				public String getUrl() {
+					return "http://smt-base/user/query";
+				}
+				
+			}, JSONObject.toJSONString(requestBody), APIGeneralResponse.class);
+			
+			// 设置用户信息集合
+			if(users == null)
+				users = Collections.emptyList();
+			map.put("users", users);
+		}
 		return map;
 	}
 }

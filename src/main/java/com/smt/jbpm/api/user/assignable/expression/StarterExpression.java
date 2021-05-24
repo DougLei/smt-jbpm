@@ -9,7 +9,7 @@ import com.douglei.bpm.process.api.user.assignable.expression.AssignableUserExpr
 import com.douglei.orm.context.SessionContext;
 
 /**
- * 指派流程发起人
+ * 
  * @author DougLei
  */
 public class StarterExpression implements AssignableUserExpression {

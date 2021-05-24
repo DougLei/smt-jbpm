@@ -41,14 +41,12 @@ POST
 --查询指定id的请求体
 { 
 	"$mode$":"UNIQUE_QUERY",
-	"ID":"EQ(1)",
-	"TENANT_ID": "EQ(xxxxxx)" -- 租户id, 从token中取
+	"ID":"EQ(1)"
 }
 --递归查询所有的请求体
 {
 	"$mode$":"RECURSIVE_QUERY",
-	"$values$":"0",
-	"TENANT_ID": "EQ(xxxxxx)" -- 租户id, 从token中取
+	"$values$":"0"
 }
 
 
@@ -89,8 +87,7 @@ POST
 	"IS_MAJOR_VERSION": "EQ(1)", --IS_MAJOR_VERSION标识是否主版本, 1是0否
 	"IS_MAJOR_SUBVERSION": "EQ(1)", --IS_MAJOR_SUBVERSION标识是否激活, 1是0否
 
-	"CREATE_DATE" : "ORDER(DESC)", --创建日期倒排序
-	"TENANT_ID": "EQ(xxxxxx)" -- 租户id, 从token中取
+	"CREATE_DATE" : "ORDER(DESC)" --创建日期倒排序
 }
 
 --查询ById
@@ -148,7 +145,6 @@ http://192.168.1.111:8504/smt-jbpm/process/instance/terminate
 POST
 {
 	"procinstId":"", --流程实例id
-	"userId":"", --进行终止操作的用户id
 	"reason":"" --终止的原因
 }
 
@@ -173,7 +169,6 @@ http://192.168.1.111:8504/smt-jbpm/process/instance/start
 POST
 {
 	"code":"", -- 流程code
-	"userId":"", -- 启动的用户id
 	"businessId":"", -- 关联的业务数据id
 	"businessData":{ -- 关联的业务数据json对象(会作为流程变量, global范围)
 		"key":"value",
@@ -204,7 +199,7 @@ POST
 
 
 --查询我的待办
-http://192.168.1.111:8504/smt-jbpm/process/user/todo/query/{userId} -- 用户id
+http://192.168.1.111:8504/smt-jbpm/process/user/todo/query
 POST
 {
 	"$mode$":"QUERY",
@@ -219,7 +214,7 @@ POST
 }
 
 --查询我的已办
-http://192.168.1.111:8504/smt-jbpm/process/user/done/query/{userId} -- 用户id
+http://192.168.1.111:8504/smt-jbpm/process/user/done/query
 POST
 {
 	"$mode$":"QUERY",
@@ -328,7 +323,7 @@ GET
 *********************************************************************************
 
 --进入任务
-http://192.168.1.111:8504/smt-jbpm/task/enter/{taskinstId}/{userId} -- 任务实例id(我的待办中查出来的id)/用户id
+http://192.168.1.111:8504/smt-jbpm/task/enter/{taskinstId} -- 任务实例id(我的待办中查出来的id)
 GET
 --响应体结构
 {
@@ -391,7 +386,7 @@ GET
 }
 
 --进入历史任务
-http://192.168.1.111:8504/smt-jbpm/task/history/enter/{taskinstId}/{userId} -- 任务实例id(我的待办中查出来的id)/用户id
+http://192.168.1.111:8504/smt-jbpm/task/history/enter/{taskinstId} -- 任务实例id(我的待办中查出来的id)
 GET
 --响应体结构
 {
@@ -414,19 +409,18 @@ GET
 }
 
 --认领任务
-http://192.168.1.111:8504/smt-jbpm/task/claim/{taskinstId}/{userId} -- 任务实例id/用户id
+http://192.168.1.111:8504/smt-jbpm/task/claim/{taskinstId} -- 任务实例id
 POST
 --响应体与进入任务的响应体保持一致
 
 --取消认领任务
-http://192.168.1.111:8504/smt-jbpm/task/unclaim/{taskinstId}/{userId} -- 任务实例id/用户id
+http://192.168.1.111:8504/smt-jbpm/task/unclaim/{taskinstId} -- 任务实例id
 POST
 
 --查询可指派的用户集合
 http://192.168.1.111:8504/smt-jbpm/task/assignableUser/query
 POST
 {
-	"userId":"必须传入", --当前操作的用户id
 	"taskinstId":"必须传入", --当前操作的任务实例id
 	"buttonType":"", --按钮的类型, 即上面handleButtons/optionButtons中的type值
 	"target":"", --目标任务(配置文件中的)id, button中有target时传入即可
@@ -445,7 +439,6 @@ http://192.168.1.111:8504/smt-jbpm/task/handle
 POST
 {
 	"taskinstId":"", --办理的任务实例id
-	"userId": "", --  办理人id
 	"suggest":"", --办理人意见
 	"attitude":"", --办理人态度; AGREE(同意)/DISAGREE(不同意)
 
@@ -491,20 +484,6 @@ POST
     "warn": null
 }
 
-
-
-*********************************************************************************
-后续需要修改userId的接口有
-*********************************************************************************
-http://192.168.1.111:8504/smt-jbpm/process/instance/terminate
-http://192.168.1.111:8504/smt-jbpm/process/user/todo/query/{userId}
-http://192.168.1.111:8504/smt-jbpm/process/user/done/query/{userId}
-http://192.168.1.111:8504/smt-jbpm/task/enter/{taskinstId}/{userId} 
-http://192.168.1.111:8504/smt-jbpm/task/claim/{taskinstId}/{userId}
-http://192.168.1.111:8504/smt-jbpm/task/unclaim/{taskinstId}/{userId}
-http://192.168.1.111:8504/smt-jbpm/task/handle
-http://192.168.1.111:8504/smt-jbpm/process/task/assignableUser/query
-http://192.168.1.111:8504/smt-jbpm/task/dispatch
 
 
 

@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.alibaba.fastjson.JSONObject;
 import com.douglei.bpm.module.Result;
 import com.douglei.bpm.module.execution.ExecutionModule;
+import com.smt.parent.code.filters.token.TokenContext;
 import com.smt.parent.code.response.Response;
 import com.smt.parent.code.spring.web.LoggingResponse;
 
@@ -30,49 +31,45 @@ public class TaskController {
 	/**
 	 * 进入任务
 	 * @param taskinstId
-	 * @param userId
 	 * @return
 	 */
 	@LoggingResponse
-	@RequestMapping(value="/enter/{taskinstId}/{userId}", method=RequestMethod.GET)
-	public Response enter(@PathVariable String taskinstId, @PathVariable String userId) {
-		return taskService.enter(userId, taskinstId);
+	@RequestMapping(value="/enter/{taskinstId}", method=RequestMethod.GET)
+	public Response enter(@PathVariable String taskinstId) {
+		return taskService.enter(TokenContext.get().getUserId(), taskinstId);
 	}
 	
 	/**
 	 * 进入历史任务
 	 * @param taskinstId
-	 * @param userId
 	 * @return
 	 */
 	@LoggingResponse
-	@RequestMapping(value="/history/enter/{taskinstId}/{userId}", method=RequestMethod.GET)
-	public Response enterHistory(@PathVariable String taskinstId, @PathVariable String userId) {
-		return taskService.enterHistory(userId, taskinstId);
+	@RequestMapping(value="/history/enter/{taskinstId}", method=RequestMethod.GET)
+	public Response enterHistory(@PathVariable String taskinstId) {
+		return taskService.enterHistory(TokenContext.get().getUserId(), taskinstId);
 	}
 	
 	/**
 	 * 认领任务
 	 * @param taskinstId
-	 * @param userId
 	 * @return
 	 */
 	@LoggingResponse
-	@RequestMapping(value="/claim/{taskinstId}/{userId}", method=RequestMethod.POST)
-	public Response claim(@PathVariable() String taskinstId, @PathVariable() String userId) {
-		return taskService.claim(userId, taskinstId);
+	@RequestMapping(value="/claim/{taskinstId}", method=RequestMethod.POST)
+	public Response claim(@PathVariable String taskinstId) {
+		return taskService.claim(TokenContext.get().getUserId(), taskinstId);
 	}
 	
 	/**
 	 * 取消认领任务
 	 * @param taskinstId
-	 * @param userId
 	 * @return
 	 */
 	@LoggingResponse
-	@RequestMapping(value="/unclaim/{taskinstId}/{userId}", method=RequestMethod.POST)
-	public Response unclaim(@PathVariable String taskinstId, @PathVariable String userId) {
-		Result result = executionModule.getTaskService().unclaim(taskinstId, userId);
+	@RequestMapping(value="/unclaim/{taskinstId}", method=RequestMethod.POST)
+	public Response unclaim(@PathVariable String taskinstId) {
+		Result result = executionModule.getTaskService().unclaim(taskinstId, TokenContext.get().getUserId());
 		if(result.isSuccess())
 			return new Response(taskinstId);
 		return new Response(null, null, result.getMessage(), result.getCode(), result.getParams());
@@ -83,7 +80,7 @@ public class TaskController {
 	 * @param json
 	 * @return
 	 */
-	@LoggingResponse
+	@LoggingResponse(loggingBody=false)
 	@RequestMapping(value="/assignableUser/query", method=RequestMethod.POST)
 	public Response queryAssignableUser(@RequestBody JSONObject json) {
 		return taskService.queryAssignableUser(json);

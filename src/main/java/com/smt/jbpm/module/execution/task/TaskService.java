@@ -19,9 +19,8 @@ import com.smt.jbpm.module.execution.task.cmd.EnterTaskCmd;
 import com.smt.jbpm.module.execution.task.cmd.HandleTaskCmd;
 import com.smt.jbpm.module.execution.task.cmd.QueryAssignableUserCmd;
 import com.smt.jbpm.module.execution.task.cmd.TaskDetail;
-import com.smt.jbpm.query.QueryCriteriaEntity;
-import com.smt.jbpm.query.QueryCriteriaResolver;
 import com.smt.parent.code.response.Response;
+import com.smt.parent.code.spring.eureka.cloud.feign.RestTemplateWrapper;
 
 /**
  * 
@@ -37,7 +36,7 @@ public class TaskService {
 	private ExecutionModule executionModule;
 	
 	@Autowired
-	private QueryCriteriaResolver queryCriteriaResolver;
+	private RestTemplateWrapper restTemplate;
 	
 	/**
 	 * 进入任务
@@ -92,13 +91,11 @@ public class TaskService {
 	 */
 	@Transaction(propagationBehavior=PropagationBehavior.SUPPORTS)
 	public Response queryAssignableUser(JSONObject json) {
-		String userId = json.remove("userId").toString();
 		String taskinstId = json.remove("taskinstId").toString();
 		String buttonType = json.remove("buttonType").toString();
 		String target = json.remove("target").toString();
-		QueryCriteriaEntity queryCriteriaEntity = queryCriteriaResolver.resolve(json);
 		
-		Map<String, Object> assignableUser = new QueryAssignableUserCmd(userId, taskinstId, buttonType, target, queryCriteriaEntity, processEngineBeans).execute();
+		Map<String, Object> assignableUser = new QueryAssignableUserCmd(taskinstId, buttonType, target, json, restTemplate, processEngineBeans).execute();
 		return new Response(assignableUser);
 	}
 	

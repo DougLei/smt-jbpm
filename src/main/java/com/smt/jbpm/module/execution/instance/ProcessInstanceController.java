@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.douglei.bpm.module.Result;
 import com.douglei.bpm.module.execution.ExecutionModule;
 import com.douglei.bpm.module.execution.instance.command.parameter.StartParameter;
+import com.smt.parent.code.filters.token.TokenContext;
 import com.smt.parent.code.response.Response;
 import com.smt.parent.code.spring.web.LoggingResponse;
 
@@ -64,7 +65,7 @@ public class ProcessInstanceController {
 	public Response terminate(@RequestBody TerminateParameterEntity entity) {
 		Result result = entity.validate();
 		if(result == null) {
-			result = executionModule.getProcessInstanceService().terminate(entity.getProcinstId(), entity.getUserId(), entity.getReason());
+			result = executionModule.getProcessInstanceService().terminate(entity.getProcinstId(), TokenContext.get().getUserId(), entity.getReason());
 			if(result.isSuccess())
 				return new Response(entity);
 			

@@ -20,6 +20,7 @@ import com.douglei.bpm.process.mapping.metadata.task.user.option.Option;
 import com.douglei.bpm.process.mapping.metadata.task.user.option.dispatch.BackOption;
 import com.douglei.bpm.process.mapping.metadata.task.user.option.dispatch.JumpOption;
 import com.smt.jbpm.SmtJbpmException;
+import com.smt.parent.code.filters.token.TokenContext;
 
 /**
  * 办理任务参数实体
@@ -27,7 +28,7 @@ import com.smt.jbpm.SmtJbpmException;
  */
 public class HandleTaskParameterEntity {
 	private String taskinstId; // 办理的任务实例id
-	private String userId; // 办理人id
+	private String userId= TokenContext.get().getUserId(); // 办理人id
 	private String suggest; // 办理人意见
 	private String attitude; // 办理人态度
 	private String reason; // 办理人的办理原因, 即为什么办理; 该值会存储在task表的reason列中; 其和 suggest和attitude是互斥的; 用来表示特殊的任务办理, 例如网关的办理, 结束事件的办理, 流程跳转等
@@ -154,9 +155,6 @@ public class HandleTaskParameterEntity {
 	}
 	public String getUserId() {
 		return userId;
-	}
-	public void setUserId(String userId) {
-		this.userId = userId;
 	}
 	public String getSuggest() {
 		return suggest;

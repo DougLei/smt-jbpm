@@ -7,6 +7,7 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.alibaba.fastjson.JSONObject;
 import com.douglei.bpm.ProcessEngineBeans;
 import com.douglei.bpm.process.mapping.metadata.ProcessMetadata;
 import com.douglei.bpm.process.mapping.metadata.flow.FlowMetadata;
@@ -14,6 +15,9 @@ import com.douglei.orm.context.PropagationBehavior;
 import com.douglei.orm.context.SessionContext;
 import com.douglei.orm.context.Transaction;
 import com.douglei.orm.context.TransactionComponent;
+import com.smt.parent.code.spring.eureka.cloud.feign.APIGeneralResponse;
+import com.smt.parent.code.spring.eureka.cloud.feign.APIGeneralServer;
+import com.smt.parent.code.spring.eureka.cloud.feign.RestTemplateWrapper;
 
 /**
  * 
@@ -24,6 +28,9 @@ public class ProcessTrackQuery {
 	
 	@Autowired
 	private ProcessEngineBeans processEngineBeans;
+	
+	@Autowired
+	private RestTemplateWrapper restTemplate;
 	
 	/**
 	 * 流程跟踪主体查询
@@ -58,6 +65,7 @@ public class ProcessTrackQuery {
 	 * @param taskKey
 	 * @return
 	 */
+	@SuppressWarnings("unchecked")
 	@Transaction(propagationBehavior=PropagationBehavior.SUPPORTS)
 	public List<Task> detailQuery(String procinstId, String taskKey) {
 		List<Task> tasks = SessionContext.getSQLSession().query(Task.class, "ProcessTrackQuery", "queryTask", Arrays.asList(procinstId, taskKey));
@@ -65,9 +73,50 @@ public class ProcessTrackQuery {
 			Map<String, Task> tempTaskMap = new HashMap<String, Task>(4);
 			tasks.forEach(task -> tempTaskMap.put(task.getId(), task));
 			
-			SessionContext.getSQLSession().query(TaskHandleDetail.class, "ProcessTrackQuery", "queryTaskHandleDetails", tasks).forEach(detail -> {
+			List<TaskHandleDetail> details = SessionContext.getSQLSession().query(TaskHandleDetail.class, "ProcessTrackQuery", "queryTaskHandleDetails", tasks);
+			
+			// 将办理人和具体的任务关联, 并记录每个办理人的id
+			StringBuilder userIds = new StringBuilder(details.size()*37);
+			details.forEach(detail -> {
+				userIds.append(detail.getUser()).append(',');
 				tempTaskMap.get(detail.getTaskinstId()).addHandleDetail(detail);
 			});
+			userIds.setLength(userIds.length()-1);
+			
+			// 根据办理人的userId, 获取对应的userName, 并进行数据绑定
+			// 构建请求体
+			Map<String, Object> requestBody = new HashMap<String, Object>(8);
+			requestBody.put("$mode$", "QUERY");
+			requestBody.put("ID", "IN("+userIds+")");
+			requestBody.put("ID", "RESULT()");
+			requestBody.put("NAME", "RESULT()");
+			
+			// 发起api请求
+			List<Map<String, String>> users = (List<Map<String, String>>)restTemplate.generalExchange(new APIGeneralServer() {
+				
+				@Override
+				public String getName() {
+					return "(同步)查询指定id的用户name集合";
+				}
+				
+				@Override
+				public String getUrl() {
+					return "http://smt-base/user/query";
+				}
+				
+			}, JSONObject.toJSONString(requestBody), APIGeneralResponse.class);
+			
+			// 进行数据绑定
+			if(users != null && !users.isEmpty()) {
+				details.forEach(detail -> {
+					for(Map<String, String> user: users) {
+						if(user.get("ID").equals(detail.getUser())) {
+							detail.setUser_(user.get("NAME"));
+							return;
+						}
+					}
+				});
+			}
 		}
 		return tasks;
 	}

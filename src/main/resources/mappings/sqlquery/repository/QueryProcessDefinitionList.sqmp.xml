@@ -19,6 +19,7 @@
 				extend.page_id 
 					from bpm_re_procdef procdef
 						left join bpm_re_procdef_extend extend on (procdef.id = extend.procdef_id)
+							where tenant_id =#{tenantId}
 		</content>
 		
 		<parameters>
@@ -31,7 +32,6 @@
 			<parameter name="is_major_version" dataType="number" />
 			<parameter name="is_major_subversion" dataType="number" />
 			<parameter name="subversion" dataType="number" />
-			<parameter name="tenant_id" dataType="string" />		
 			<parameter name="create_date" dataType="datetime" />		
 		</parameters>	
 	</sql-query>

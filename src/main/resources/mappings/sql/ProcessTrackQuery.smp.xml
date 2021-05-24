@@ -38,7 +38,7 @@
 		<content name="queryTaskHandleDetails" type="select">
 			select 
 				handle_details.taskinst_id, 
-				user_.real_name user_,
+				handle_details.user_id user_,
 				handle_details.claim_time,
 				handle_details.finish_time,
 				handle_details.suggest,
@@ -55,7 +55,6 @@
 						union
 						select taskinst_id, user_id, null claim_time, dispatch_time finish_time, null suggest, null attitude, 8 state from bpm_hi_dispatch where is_enabled=1
 					) handle_details
-						left join smt_imp_user user_ on (user_.id = handle_details.user_id)
 							where 
 							<foreach collection="tasks" alias="task" open="handle_details.taskinst_id in (" separator="," close=")">
 								#{task.id}

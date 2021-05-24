@@ -4,7 +4,7 @@
 	<sql-query name="QueryUserDoneList">
 		<content>
 			select task.taskinst_id id, procdef.type_id, procinst.title, procinst.start_user_id, task.name name, assignee.finish_time, task.state_ task_state, procinst.state_ procinst_state, task.business_id, task.page_id
-				from (select distinct taskinst_id, finish_time from bpm_hi_assignee where user_id=#{userId} and handle_state = 6) assignee
+				from (select distinct taskinst_id, finish_time from bpm_hi_assignee where user_id= #{userId} and handle_state = 6) assignee
 					left join (
 						select procdef_id, procinst_id, taskinst_id, name, business_id, page_id, 'H' state_ from bpm_hi_task
 						union

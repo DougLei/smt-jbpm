@@ -3,7 +3,7 @@
 	<!-- 查询流程类型列表 -->
 	<sql-query name="QueryProcessTypeList">
 		<content>
-			select id, parent_id, code, name, tenant_id from bpm_re_type
+			select id, parent_id, code, name, tenant_id from bpm_re_type where tenant_id= #{tenantId}
 		</content>
 		
 		<parameters>
@@ -11,7 +11,6 @@
 			<parameter name="parent_id" dataType="number" />		
 			<parameter name="code" dataType="string" />		
 			<parameter name="name" dataType="string" />		
-			<parameter name="tenant_id" dataType="string" />		
 		</parameters>	
 	</sql-query>
 </mapping-configuration>

@@ -63,7 +63,7 @@ public class ProcessDefinitionParser {
 			builder.setDescription(process.getString("description"));
 			return new ParseResult(process.getString("pageID"), builder);
 		} catch (ValidatorException e) {
-			Result result = e.buildClientResult();
+			Result result = e.buildResult();
 			if(result == null)
 				throw e;
 			return new ParseResult(result);
@@ -188,7 +188,7 @@ public class ProcessDefinitionParser {
 		 * 构建要返回给客户端的Result实例
 		 * @return 返回null, 标识直接抛异常即可
 		 */
-		public Result buildClientResult() {
+		public Result buildResult() {
 			if(message == null)
 				return null;
 			return new Result(message, code, params);
