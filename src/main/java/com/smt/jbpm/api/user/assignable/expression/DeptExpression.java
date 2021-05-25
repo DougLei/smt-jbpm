@@ -32,9 +32,9 @@ public class DeptExpression implements AssignableUserExpression {
 	public List<String> getUserIds(String value, AssignableUserExpressionParameter parameter) {
 		// 构建请求体
 		Map<String, String> requestBody = new HashMap<String, String>(8);
-		requestBody.put("parentKey", getParentKey());
+		requestBody.put("parentType", getParentKey());
 		requestBody.put("parentValue", value);
-		requestBody.put("childKey", "USER_ID");
+		requestBody.put("childType", "USER_ID");
 		requestBody.put("projectCode", TokenContext.get().getProjectCode());
 		
 		// 发起api请求
