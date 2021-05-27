@@ -1,5 +1,7 @@
 package com.smt.jbpm.module.repository.definition;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -13,8 +15,6 @@ import com.smt.jbpm.module.repository.definition.insert.ParseResult;
 import com.smt.jbpm.module.repository.definition.insert.ProcessDefinitionParser;
 import com.smt.jbpm.module.repository.definition.insert.ProcessDesign;
 import com.smt.parent.code.filters.token.TokenContext;
-import com.smt.parent.code.query.QueryCriteria;
-import com.smt.parent.code.query.QueryCriteriaEntity;
 import com.smt.parent.code.query.QueryExecutor;
 import com.smt.parent.code.response.Response;
 import com.smt.parent.code.spring.web.LoggingResponse;
@@ -41,13 +41,13 @@ public class ProcessDefinitionController {
 	
 	/**
 	 * 查询
-	 * @param entity
+	 * @param request
 	 * @return
 	 */
 	@LoggingResponse(loggingBody=false)
-	@RequestMapping(value="/query", method=RequestMethod.POST)
-	public Response query(@QueryCriteria QueryCriteriaEntity entity) {
-		return queryExecutor.execute("QueryProcessDefinitionList", TokenContext.get().getTenantId(), entity);
+	@RequestMapping(value="/query", method=RequestMethod.GET)
+	public Response query(HttpServletRequest request) {
+		return queryExecutor.execute("QueryProcessDefinitionList", TokenContext.get().getTenantId(), request);
 	}
 	
 	/**

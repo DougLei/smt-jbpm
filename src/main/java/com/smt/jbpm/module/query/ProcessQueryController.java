@@ -2,6 +2,8 @@ package com.smt.jbpm.module.query;
 
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -12,8 +14,6 @@ import com.smt.jbpm.module.query.track.ProcessSubject;
 import com.smt.jbpm.module.query.track.ProcessTrackQuery;
 import com.smt.jbpm.module.query.track.Task;
 import com.smt.parent.code.filters.token.TokenContext;
-import com.smt.parent.code.query.QueryCriteria;
-import com.smt.parent.code.query.QueryCriteriaEntity;
 import com.smt.parent.code.query.QueryExecutor;
 import com.smt.parent.code.response.Response;
 import com.smt.parent.code.spring.web.LoggingResponse;
@@ -34,35 +34,35 @@ public class ProcessQueryController {
 	
 	/**
 	 * 待办查询
-	 * @param entity
+	 * @param request
 	 * @return
 	 */
 	@LoggingResponse(loggingBody=false)
-	@RequestMapping(value="/user/todo/query", method=RequestMethod.POST)
-	public Response todoQuery(@QueryCriteria QueryCriteriaEntity entity) {
-		return queryExecutor.execute("QueryUserTodoList", TokenContext.get().getUserId(), entity);
+	@RequestMapping(value="/user/todo/query", method=RequestMethod.GET)
+	public Response todoQuery(HttpServletRequest request) {
+		return queryExecutor.execute("QueryUserTodoList", TokenContext.get().getUserId(), request);
 	}
 	
 	/**
 	 * 已办查询
-	 * @param entity
+	 * @param request
 	 * @return
 	 */
 	@LoggingResponse(loggingBody=false)
-	@RequestMapping(value="/user/done/query", method=RequestMethod.POST)
-	public Response doneQuery(@QueryCriteria QueryCriteriaEntity entity) {
-		return queryExecutor.execute("QueryUserDoneList", TokenContext.get().getUserId(), entity);
+	@RequestMapping(value="/user/done/query", method=RequestMethod.GET)
+	public Response doneQuery(HttpServletRequest request) {
+		return queryExecutor.execute("QueryUserDoneList", TokenContext.get().getUserId(), request);
 	}
 	
 	/**
 	 * 实例查询
-	 * @param entity
+	 * @param request
 	 * @return
 	 */
 	@LoggingResponse(loggingBody=false)
-	@RequestMapping(value="/instance/query", method=RequestMethod.POST)
-	public Response instanceQuery(@QueryCriteria QueryCriteriaEntity entity) {
-		return queryExecutor.execute("QueryProcessInstanceList", TokenContext.get().getTenantId(), entity);
+	@RequestMapping(value="/instance/query", method=RequestMethod.GET)
+	public Response instanceQuery(HttpServletRequest request) {
+		return queryExecutor.execute("QueryProcessInstanceList", TokenContext.get().getTenantId(), request);
 	}
 	
 	/**

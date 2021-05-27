@@ -11,8 +11,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.douglei.bpm.module.repository.type.Type;
 import com.smt.parent.code.filters.token.TokenContext;
-import com.smt.parent.code.query.QueryCriteria;
-import com.smt.parent.code.query.QueryCriteriaEntity;
 import com.smt.parent.code.query.QueryExecutor;
 import com.smt.parent.code.response.Response;
 import com.smt.parent.code.spring.web.LoggingResponse;
@@ -33,13 +31,13 @@ public class TypeController {
 	
 	/**
 	 * 查询类型
-	 * @param entity
+	 * @param request
 	 * @return
 	 */
 	@LoggingResponse(loggingBody=false)
-	@RequestMapping(value="/query", method=RequestMethod.POST)
-	public Response query(@QueryCriteria QueryCriteriaEntity entity) {
-		return queryExecutor.execute("QueryProcessTypeList", TokenContext.get().getTenantId(), entity);
+	@RequestMapping(value="/query", method=RequestMethod.GET)
+	public Response query(HttpServletRequest request) {
+		return queryExecutor.execute("QueryProcessTypeList", TokenContext.get().getTenantId(), request);
 	}
 	
 	/**
