@@ -101,7 +101,7 @@ public class ProcessTrackQuery {
 				
 				@Override
 				public String getUrl() {
-					return "http://smt-base/smt-base/user/query";
+					return "http://smt-base/smt-base/user/query4JBPM";
 				}
 				
 			}, JSONObject.toJSONString(requestBody), APIGeneralResponse.class);

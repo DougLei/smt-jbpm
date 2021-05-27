@@ -53,7 +53,7 @@ public class DeptExpression implements AssignableUserExpression {
 		}, JSONObject.toJSONString(requestBody), APIGeneralResponse.class);
 		
 		// 返回查询的结果
-		if(userIds == null || userIds.isEmpty())
+		if(userIds == null)
 			return null;
 		return userIds;
 	}
