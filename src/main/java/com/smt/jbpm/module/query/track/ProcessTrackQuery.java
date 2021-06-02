@@ -88,7 +88,7 @@ public class ProcessTrackQuery {
 			Map<String, Object> requestBody = new HashMap<String, Object>(8);
 			requestBody.put("$mode$", "QUERY");
 			requestBody.put("ID", "IN("+userIds+")");
-			requestBody.put("ID", "RESULT()");
+			requestBody.put("ID,", "RESULT()");
 			requestBody.put("NAME", "RESULT()");
 			
 			// 发起api请求
@@ -107,7 +107,7 @@ public class ProcessTrackQuery {
 			}, JSONObject.toJSONString(requestBody), APIGeneralResponse.class);
 			
 			// 进行数据绑定
-			if(users != null && !users.isEmpty()) {
+			if(!users.isEmpty()) {
 				details.forEach(detail -> {
 					for(Map<String, String> user: users) {
 						if(user.get("ID").equals(detail.getUser())) {

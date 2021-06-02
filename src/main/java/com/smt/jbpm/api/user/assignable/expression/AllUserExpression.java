@@ -1,5 +1,6 @@
 package com.smt.jbpm.api.user.assignable.expression;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -40,7 +41,7 @@ public class AllUserExpression implements AssignableUserExpression {
 		requestBody.put("ID", "RESULT()");
 		
 		// 发起api请求
-		List<String> userIds = (List<String>)restTemplate.generalExchange(new APIGeneralServer() {
+		List<Map<String, Object>> users = (List<Map<String, Object>>)restTemplate.generalExchange(new APIGeneralServer() {
 			
 			@Override
 			public String getName() {
@@ -55,8 +56,11 @@ public class AllUserExpression implements AssignableUserExpression {
 		}, JSONObject.toJSONString(requestBody), APIGeneralResponse.class);
 		
 		// 返回查询的结果
-		if(userIds == null || userIds.isEmpty())
+		if(users.isEmpty())
 			return null;
+		
+		List<String> userIds = new ArrayList<String>(users.size());
+		users.forEach(user -> userIds.add(user.get("ID").toString()));
 		return userIds;
 	}
 }

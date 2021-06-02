@@ -7,7 +7,6 @@ import java.util.Map;
 import com.alibaba.fastjson.JSONObject;
 import com.douglei.bpm.process.api.user.assignable.expression.AssignableUserExpression;
 import com.douglei.bpm.process.api.user.assignable.expression.AssignableUserExpressionParameter;
-import com.smt.parent.code.filters.token.TokenContext;
 import com.smt.parent.code.spring.eureka.cloud.feign.APIGeneralResponse;
 import com.smt.parent.code.spring.eureka.cloud.feign.APIGeneralServer;
 import com.smt.parent.code.spring.eureka.cloud.feign.RestTemplateWrapper;
@@ -35,10 +34,9 @@ public class DeptExpression implements AssignableUserExpression {
 		requestBody.put("parentType", getParentKey());
 		requestBody.put("parentValue", value);
 		requestBody.put("childType", "USER_ID");
-		requestBody.put("projectCode", TokenContext.get().getProjectCode());
 		
 		// 发起api请求
-		List<String> userIds = (List<String>)restTemplate.generalExchange(new APIGeneralServer() {
+		return (List<String>)restTemplate.generalExchange(new APIGeneralServer() {
 			
 			@Override
 			public String getName() {
@@ -51,11 +49,6 @@ public class DeptExpression implements AssignableUserExpression {
 			}
 			
 		}, JSONObject.toJSONString(requestBody), APIGeneralResponse.class);
-		
-		// 返回查询的结果
-		if(userIds == null)
-			return null;
-		return userIds;
 	}
 	
 	/**

@@ -185,7 +185,6 @@ public class QueryAssignableUserCmd {
 	 * @param assignPolicy
 	 * @return
 	 */
-	@SuppressWarnings("unchecked")
 	private Map<String, Object> buildAssignableUserList(AssignPolicy assignPolicy) {
 		// 查询可指派的人员集合
 		HashSet<String> assignableUserIds = new HashSet<String>();
@@ -210,8 +209,8 @@ public class QueryAssignableUserCmd {
 			requestBody.put("$mode$", "QUERY");
 			requestBody.put("ID", "IN("+userIds+")");
 			
-			// 发起api请求
-			List<Object> users = (List<Object>)restTemplate.generalExchange(new APIGeneralServer() {
+			// 发起api请求; 并设置用户信息集合
+			map.put("users", restTemplate.generalExchange(new APIGeneralServer() {
 				
 				@Override
 				public String getName() {
@@ -223,12 +222,7 @@ public class QueryAssignableUserCmd {
 					return "http://smt-base/smt-base/user/query4JBPM";
 				}
 				
-			}, JSONObject.toJSONString(requestBody), APIGeneralResponse.class);
-			
-			// 设置用户信息集合
-			if(users == null)
-				users = Collections.emptyList();
-			map.put("users", users);
+			}, JSONObject.toJSONString(requestBody), APIGeneralResponse.class));
 		}
 		return map;
 	}
