@@ -12,6 +12,7 @@ public class ProcessDefinitionExtend {
 	private String struct; // 流程结构json字符串
 	private String image; // 流程界面json字符串
 	private String pageId; // 页面id
+	private int startMode;
 	private Date createDate; // 创建时间
 	
 	public int getId() {
@@ -43,6 +44,12 @@ public class ProcessDefinitionExtend {
 	}
 	public void setPageId(String pageId) {
 		this.pageId = pageId;
+	}
+	public int getStartMode() {
+		return startMode;
+	}
+	public void setStartMode(int startMode) {
+		this.startMode = startMode;
 	}
 	public Date getCreateDate() {
 		return createDate;

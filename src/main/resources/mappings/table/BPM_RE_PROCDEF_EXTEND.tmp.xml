@@ -8,6 +8,7 @@
 			<column name="STRUCT" property="struct" dataType="clob" nullable="false" />
 			<column name="IMAGE" property="image" dataType="clob" nullable="false" />
 			<column name="PAGE_ID" property="pageId" dataType="string" length="3000"/>
+			<column name="START_MODE" property="startMode" dataType="number" length="1" nullable="false"/>
 			<column name="CREATE_DATE" property="createDate" dataType="datetime" nullable="false" />
 		</columns>
 		

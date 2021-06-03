@@ -73,7 +73,7 @@ public class ProcessDefinitionController {
 	public Response insert(@RequestBody ProcessDesign design) {
 		ParseResult result = processDefinitionParser.parse(design.getStruct());
 		if(result.isSuccess())
-			return processDefinitionService.insert(result.getProcessDefinitionBuilder(), design.getStruct(), design.getImage(), result.getPageId());
+			return processDefinitionService.insert(result.getProcessDefinitionBuilder(), design.getStruct(), design.getImage(), result.getPageId(), result.getStartMode());
 		return new Response(null, null, result.getFailReason().getMessage(), result.getFailReason().getCode(), result.getFailReason().getParams());
 	}
 	

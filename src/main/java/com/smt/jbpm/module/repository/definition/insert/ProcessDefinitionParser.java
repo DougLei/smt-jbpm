@@ -61,7 +61,7 @@ public class ProcessDefinitionParser {
 			builder.setStrict("true".equalsIgnoreCase(process.getString("strict")));
 			builder.setTypeId(validator.type.id);
 			builder.setDescription(process.getString("description"));
-			return new ParseResult(process.getString("pageID"), builder);
+			return new ParseResult(process.getString("pageID"), process.getIntValue("startMode"), builder);
 		} catch (ValidatorException e) {
 			Result result = e.buildResult();
 			if(result == null)

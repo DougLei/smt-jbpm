@@ -16,15 +16,16 @@ public class ParseResult {
 	
 	// 成功时记录解析结果
 	private String pageId;
+	private int startMode;
 	private ProcessDefinitionBuilder builder;
 	
 	ParseResult(Result failReason) {
-		this.success = false;
 		this.failReason = failReason;
 	}
-	ParseResult(String pageId, ProcessDefinitionBuilder builder) {
+	ParseResult(String pageId, int startMode, ProcessDefinitionBuilder builder) {
 		this.success = true;
 		this.pageId = pageId;
+		this.startMode = startMode;
 		this.builder = builder;
 	}
 	
@@ -36,6 +37,9 @@ public class ParseResult {
 	}
 	public String getPageId() {
 		return pageId;
+	}
+	public int getStartMode() {
+		return startMode;
 	}
 	public ProcessDefinitionBuilder getProcessDefinitionBuilder() {
 		return builder;

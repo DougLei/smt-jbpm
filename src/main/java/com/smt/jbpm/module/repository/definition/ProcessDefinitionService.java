@@ -34,10 +34,11 @@ public class ProcessDefinitionService {
 	 * @param struct
 	 * @param image
 	 * @param pageId
+	 * @param startMode
 	 * @return
 	 */
 	@Transaction
-	public Response insert(ProcessDefinitionBuilder builder, String struct, String image, String pageId) {
+	public Response insert(ProcessDefinitionBuilder builder, String struct, String image, String pageId, int startMode) {
 		builder.setTenantId(TokenContext.get().getTenantId());
 		Result result = repositoryModule.getDefinitionService().insert(builder);
 		if(result.isFail()) 
@@ -49,6 +50,7 @@ public class ProcessDefinitionService {
 		extend.setStruct(struct);
 		extend.setImage(image);
 		extend.setPageId(pageId);
+		extend.setStartMode(startMode);
 		
 		Object[] obj = SessionContext.getSqlSession().uniqueQuery_("select id from bpm_re_procdef_extend where procdef_id=?", Arrays.asList(extend.getProcdefId()));
 		if(obj == null) {
