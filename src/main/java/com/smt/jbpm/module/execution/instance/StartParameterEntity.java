@@ -17,7 +17,7 @@ import com.smt.parent.code.filters.token.TokenEntity;
 public class StartParameterEntity {
 	private String code;
 	private String version;
-	private HashSet<String> assignedUserIds; // 指派的用户id集合
+	private HashSet<String> assignedUserIds; // 指派的用户id集合;  TODO 后续会根据StartMode决定如何使用该属性
 	private String businessId; // 当前的业务id
 	private Map<String, Object> businessData; // 当前的业务数据
 	
@@ -35,11 +35,7 @@ public class StartParameterEntity {
 		TokenEntity token = TokenContext.get();
 		StartParameter parameter = new StartParameter(code, version, token.getTenantId());
 		parameter.setUserId(token.getUserId());
-		if(assignedUserIds == null) {
-			parameter.getAssignEntity().addAssignedUserId(token.getUserId());
-		}else {
-			parameter.getAssignEntity().addAssignedUserIds(assignedUserIds);
-		}
+		parameter.getAssignEntity().addAssignedUserId(token.getUserId());
 		
 		parameter.setBusinessId(businessId);
 		if(businessData != null)

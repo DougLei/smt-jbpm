@@ -16,7 +16,8 @@
 				procdef.description, 
 				procdef.tenant_id, 
 				extend.create_date, 
-				extend.page_id 
+				extend.page_id,
+				extend.start_mode
 					from bpm_re_procdef procdef
 						left join bpm_re_procdef_extend extend on (procdef.id = extend.procdef_id)
 							where tenant_id =#{tenantId}
