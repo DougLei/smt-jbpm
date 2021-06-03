@@ -36,7 +36,6 @@ public class StartParameterEntity {
 		StartParameter parameter = new StartParameter(code, version, token.getTenantId());
 		parameter.setUserId(token.getUserId());
 		parameter.getAssignEntity().addAssignedUserId(token.getUserId());
-		
 		parameter.setBusinessId(businessId);
 		if(businessData != null)
 			parameter.getVariableEntities().addVariables(Scope.GLOBAL, businessData);
